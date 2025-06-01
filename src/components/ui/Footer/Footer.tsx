@@ -14,8 +14,6 @@ const Footer: React.FC = () => {
 
           <div className='footer-info'>
             <span>© 2025 Plan Voyage Team</span>
-            <span>•</span>
-            <span>PROG8751 Capstone Project</span>
           </div>
         </div>
       </div>
