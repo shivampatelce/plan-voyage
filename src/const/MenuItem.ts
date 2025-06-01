@@ -1,7 +1,6 @@
 export const MENU_ITEMS = {
   HOME: 'Home',
   TRIPS: 'Trips',
-  CREATE_TRIP: 'Create Trip',
   LOGOUT: 'Logout',
 } as const;
 

@@ -78,6 +78,10 @@
   cursor: pointer;
 }
 
+.logout-button {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+}
+
 .mobile-menu-btn {
   display: block;
   padding: 8px;

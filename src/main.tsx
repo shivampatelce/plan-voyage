@@ -7,17 +7,13 @@ import router from './routes.tsx';
 
 // Initialized keycloak
 keycloakConfig
-  .init({ onLoad: 'login-required' })
-  .then((authenticated: boolean) => {
-    if (authenticated) {
-      createRoot(document.getElementById('root')!).render(
-        <StrictMode>
-          <RouterProvider router={router} />
-        </StrictMode>
-      );
-    } else {
-      keycloakConfig.login();
-    }
+  .init({ onLoad: 'check-sso' })
+  .then(() => {
+    createRoot(document.getElementById('root')!).render(
+      <StrictMode>
+        <RouterProvider router={router} />
+      </StrictMode>
+    );
   })
   .catch((error: unknown) => {
     console.error(error);

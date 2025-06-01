@@ -16,9 +16,17 @@ import {
 import './home.css';
 import { useNavigate } from 'react-router';
 import { ROUTE_PATH } from '../../const/RoutePath';
+import keycloakConfig from '../../keycloak-config';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+
+  const navigateToTrip = () => {
+    if (keycloakConfig.authenticated) {
+      return navigate(ROUTE_PATH.TRIPS);
+    }
+    keycloakConfig.login();
+  };
 
   const features = [
     {
@@ -126,9 +134,7 @@ const Home: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className='btn-primary'
-              onClick={() => {
-                navigate(`/${ROUTE_PATH.TRIPS}`);
-              }}>
+              onClick={navigateToTrip}>
               <span>Start Planning</span>
               <ArrowForward style={{ width: '20px', height: '20px' }} />
             </motion.button>
@@ -297,9 +303,7 @@ const Home: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className='btn-cta'
-              onClick={() => {
-                navigate(`/${ROUTE_PATH.TRIPS}`);
-              }}>
+              onClick={navigateToTrip}>
               <span>Start Your Journey</span>
               <ArrowForward style={{ width: '24px', height: '24px' }} />
             </motion.button>

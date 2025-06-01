@@ -2,12 +2,32 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Flight, Menu, Close } from '@mui/icons-material';
 import './Navbar.css';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { ROUTE_PATH } from '../../../const/RoutePath';
+import keycloakConfig from '../../../keycloak-config';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const logout = () => {
+    keycloakConfig
+      .logout()
+      .then(() => {
+        navigate(ROUTE_PATH.HOME);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const navigateToTrip = () => {
+    if (keycloakConfig.authenticated) {
+      return navigate(ROUTE_PATH.TRIPS);
+    }
+    keycloakConfig.login();
+  };
 
   return (
     <header className='header'>
@@ -29,28 +49,58 @@ const Navbar: React.FC = () => {
           </motion.div>
 
           <nav className='nav-desktop'>
-            {['Log in'].map((item, index) => (
-              <motion.a
-                key={item}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                href={`#${item.toLowerCase()}`}
-                className='nav-link'>
-                {item}
-              </motion.a>
-            ))}
-            <motion.button
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className='nav-button'
-              onClick={() => {
-                navigate(`/${ROUTE_PATH.TRIPS}`);
-              }}>
-              Get Started
-            </motion.button>
+            {/* Display Get started button for home page only */}
+            {location.pathname === '/' && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className='nav-button'
+                onClick={navigateToTrip}>
+                Get Started
+              </motion.button>
+            )}
+
+            {location.pathname !== '/' && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className='nav-button'
+                onClick={() => {
+                  navigate(ROUTE_PATH.HOME);
+                }}>
+                Home
+              </motion.button>
+            )}
+
+            {keycloakConfig.authenticated ? (
+              <motion.button
+                className='nav-button logout-button'
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  logout();
+                }}>
+                Logout
+              </motion.button>
+            ) : (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className='nav-button'
+                onClick={() => {
+                  keycloakConfig.login();
+                }}>
+                Log In
+              </motion.button>
+            )}
           </nav>
 
           <button
@@ -72,16 +122,40 @@ const Navbar: React.FC = () => {
             exit={{ opacity: 0, height: 0 }}
             className='mobile-nav'>
             <div className='mobile-nav-content'>
-              {['Features', 'About', 'Contact'].map((item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  className='mobile-nav-link'
-                  onClick={() => setIsMenuOpen(false)}>
-                  {item}
-                </a>
-              ))}
-              <button className='mobile-nav-button'>Get Started</button>
+              {/* Display Get started button for home page only */}
+              {location.pathname === '/' ? (
+                <button
+                  className='mobile-nav-button'
+                  onClick={navigateToTrip}>
+                  Get Started
+                </button>
+              ) : (
+                <button
+                  className='mobile-nav-button'
+                  onClick={() => {
+                    navigate(ROUTE_PATH.HOME);
+                  }}>
+                  Home
+                </button>
+              )}
+
+              {keycloakConfig.authenticated ? (
+                <button
+                  className='mobile-nav-button logout-button'
+                  onClick={() => {
+                    logout();
+                  }}>
+                  Logout
+                </button>
+              ) : (
+                <button
+                  className='mobile-nav-button'
+                  onClick={() => {
+                    keycloakConfig.login();
+                  }}>
+                  Log In
+                </button>
+              )}
             </div>
           </motion.div>
         )}
