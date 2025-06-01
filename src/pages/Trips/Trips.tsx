@@ -1,4 +1,6 @@
-const Trips = () => {
+import type React from 'react';
+
+const Trips: React.FC = () => {
   return (
     <>
       <h2>Trips</h2>

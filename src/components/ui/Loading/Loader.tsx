@@ -1,7 +1,8 @@
+import type React from 'react';
 import './Loader.css';
 import { motion } from 'motion/react';
 
-const Loader = () => {
+const Loader: React.FC = () => {
   const dotVariants = {
     pulse: {
       scale: [1, 1.5, 1],

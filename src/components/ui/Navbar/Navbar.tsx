@@ -1,107 +1,92 @@
-import { useState } from 'react';
-import {
-  AppBar,
-  Box,
-  Toolbar,
-  Typography,
-  IconButton,
-  Button,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import keycloakConfig from '../../../keycloak-config';
-import { MENU_ITEMS, type MENU_ITEM_VALUES } from '../../../const/MenuItem';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Flight, Menu, Close } from '@mui/icons-material';
+import './Navbar.css';
 import { useNavigate } from 'react-router';
 import { ROUTE_PATH } from '../../../const/RoutePath';
 
-const Navbar = () => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
+const Navbar: React.FC = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  const menuItems: MENU_ITEM_VALUES[] = [
-    MENU_ITEMS.HOME,
-    MENU_ITEMS.TRIPS,
-    MENU_ITEMS.CREATE_TRIP,
-    MENU_ITEMS.LOGOUT,
-  ];
-
-  const toggleDrawer = (open: boolean) => () => {
-    setDrawerOpen(open);
-  };
-
-  const handleMenuClick = (item: MENU_ITEM_VALUES) => {
-    if (item === MENU_ITEMS.HOME) {
-      navigate('/');
-    } else if (item === MENU_ITEMS.TRIPS) {
-      navigate(`/${ROUTE_PATH.TRIPS}`);
-    } else if (item === MENU_ITEMS.CREATE_TRIP) {
-      navigate(`/${ROUTE_PATH.CREATE_TRIPS}`);
-    } else if (item === MENU_ITEMS.LOGOUT) {
-      keycloakConfig.logout();
-    }
-  };
-
-  const drawerList = (
-    <Box
-      sx={{ width: 250 }}
-      onClick={toggleDrawer(false)}>
-      <List>
-        {menuItems.map((text) => (
-          <ListItem
-            button={true}
-            key={text}
-            onClick={() => handleMenuClick(text)}>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-    </Box>
-  );
-
   return (
-    <>
-      <AppBar
-        position='static'
-        sx={{ backgroundColor: '#ff5722' }}>
-        <Toolbar>
-          <IconButton
-            edge='start'
-            color='inherit'
-            aria-label='menu'
-            onClick={toggleDrawer(true)}
-            sx={{ mr: 2, display: { xs: 'block', md: 'none' } }}>
-            <MenuIcon />
-          </IconButton>
+    <header className='header'>
+      <div className='header-content'>
+        <div className='header-inner'>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className='logo'>
+            <div className='logo-icon-wrapper'>
+              <Flight className='logo-icon' />
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+                className='logo-spinner'
+              />
+            </div>
+            <span className='logo-text gradient-text'>Plan Voyage</span>
+          </motion.div>
 
-          <Typography
-            variant='h6'
-            sx={{ flexGrow: 1 }}>
-            Plan Voyage
-          </Typography>
-
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
-            {menuItems.map((item) => (
-              <Button
+          <nav className='nav-desktop'>
+            {['Log in'].map((item, index) => (
+              <motion.a
                 key={item}
-                color='inherit'
-                onClick={() => handleMenuClick(item)}>
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                href={`#${item.toLowerCase()}`}
+                className='nav-link'>
                 {item}
-              </Button>
+              </motion.a>
             ))}
-          </Box>
-        </Toolbar>
-      </AppBar>
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className='nav-button'
+              onClick={() => {
+                navigate(`/${ROUTE_PATH.TRIPS}`);
+              }}>
+              Get Started
+            </motion.button>
+          </nav>
 
-      <Drawer
-        anchor='left'
-        open={drawerOpen}
-        onClose={toggleDrawer(false)}>
-        {drawerList}
-      </Drawer>
-    </>
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className='mobile-menu-btn'>
+            {isMenuOpen ? (
+              <Close style={{ width: '24px', height: '24px' }} />
+            ) : (
+              <Menu style={{ width: '24px', height: '24px' }} />
+            )}
+          </button>
+        </div>
+      </div>
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className='mobile-nav'>
+            <div className='mobile-nav-content'>
+              {['Features', 'About', 'Contact'].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  className='mobile-nav-link'
+                  onClick={() => setIsMenuOpen(false)}>
+                  {item}
+                </a>
+              ))}
+              <button className='mobile-nav-button'>Get Started</button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
   );
 };
 
