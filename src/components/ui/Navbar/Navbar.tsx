@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   AppBar,
   Box,
@@ -12,11 +12,15 @@ import {
   ListItemText,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import keycloakConfig from '../../keycloak-config';
-import { MENU_ITEMS, type MENU_ITEM_VALUES } from '../../const/MenuItem';
+import keycloakConfig from '../../../keycloak-config';
+import { MENU_ITEMS, type MENU_ITEM_VALUES } from '../../../const/MenuItem';
+import { useNavigate } from 'react-router';
+import { ROUTE_PATH } from '../../../const/RoutePath';
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const navigate = useNavigate();
+
   const menuItems: MENU_ITEM_VALUES[] = [
     MENU_ITEMS.HOME,
     MENU_ITEMS.TRIPS,
@@ -29,7 +33,13 @@ const Navbar = () => {
   };
 
   const handleMenuClick = (item: MENU_ITEM_VALUES) => {
-    if (item === MENU_ITEMS.LOGOUT) {
+    if (item === MENU_ITEMS.HOME) {
+      navigate('/');
+    } else if (item === MENU_ITEMS.TRIPS) {
+      navigate(`/${ROUTE_PATH.TRIPS}`);
+    } else if (item === MENU_ITEMS.CREATE_TRIP) {
+      navigate(`/${ROUTE_PATH.CREATE_TRIPS}`);
+    } else if (item === MENU_ITEMS.LOGOUT) {
       keycloakConfig.logout();
     }
   };
