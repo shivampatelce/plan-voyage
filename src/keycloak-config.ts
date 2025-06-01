@@ -1,9 +1,9 @@
 import Keycloak from 'keycloak-js';
 
 const keycloakConfig = new Keycloak({
-  url: 'http://localhost:8081/',
-  realm: 'plan-voyage',
-  clientId: 'plan-voyage-client',
+  url: import.meta.env.VITE_KEYCLOAK_URL,
+  realm: import.meta.env.VITE_KEYCLOAK_REALM,
+  clientId: import.meta.env.VITE_KEYCLOAK_REALM_CLIENT,
 });
 
 export default keycloakConfig;

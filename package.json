@@ -17,6 +17,7 @@
     "eslint-plugin-react-dom": "^1.50.0",
     "eslint-plugin-react-x": "^1.50.0",
     "keycloak-js": "^26.2.0",
+    "motion": "^12.15.0",
     "plan-voyage": "file:",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
