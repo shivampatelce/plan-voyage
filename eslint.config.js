@@ -16,6 +16,8 @@ export default tseslint.config(
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      'react-x': reactX,
+      'react-dom': reactDom,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -23,6 +25,8 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      ...reactX.configs['recommended-typescript'].rules,
+      ...reactDom.configs.recommended.rules,
     },
   },
 )
