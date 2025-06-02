@@ -17,13 +17,14 @@ import './home.css';
 import { useNavigate } from 'react-router';
 import { ROUTE_PATH } from '../../const/RoutePath';
 import keycloak from '../../keycloak-config';
+import GlassmorphicCard from '../../components/ui/GlassmorphicCard/GlassmorphicCard';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
-  const navigateToTrip = () => {
+  const navigateToCreateTrip = () => {
     if (keycloak.authenticated) {
-      return navigate(ROUTE_PATH.TRIPS);
+      return navigate(ROUTE_PATH.CREATE_TRIP);
     }
     keycloak.login();
   };
@@ -134,7 +135,7 @@ const Home: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className='btn-primary'
-              onClick={navigateToTrip}>
+              onClick={navigateToCreateTrip}>
               <span>Start Planning</span>
               <ArrowForward style={{ width: '20px', height: '20px' }} />
             </motion.button>
@@ -157,6 +158,7 @@ const Home: React.FC = () => {
           </motion.div>
         </div>
       </section>
+
       <section
         id='features'
         className='section'>
@@ -178,14 +180,11 @@ const Home: React.FC = () => {
 
           <div className='features-grid'>
             {features.map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -10, scale: 1.03 }}
-                className='card feature-card'>
+              <GlassmorphicCard
+                key={index}
+                size='medium'
+                sx={{ maxWidth: '800px', margin: '0 auto' }}
+                transition={{ delay: index * 0.1 }}>
                 <div
                   className='feature-icon'
                   style={{ background: feature.gradient }}>
@@ -196,7 +195,7 @@ const Home: React.FC = () => {
 
                 <h3 className='feature-title'>{feature.title}</h3>
                 <p className='feature-description'>{feature.description}</p>
-              </motion.div>
+              </GlassmorphicCard>
             ))}
           </div>
         </div>
@@ -222,14 +221,11 @@ const Home: React.FC = () => {
 
           <div className='benefits-grid'>
             {benefits.map((benefit, index) => (
-              <motion.div
-                key={benefit.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-                whileHover={{ scale: 1.05 }}
-                className='card benefit-card'>
+              <GlassmorphicCard
+                key={index}
+                size='medium'
+                sx={{ maxWidth: '800px', margin: '0 auto' }}
+                transition={{ delay: index * 0.1 }}>
                 <div
                   className='benefit-icon'
                   style={{ background: benefit.gradient }}>
@@ -239,11 +235,12 @@ const Home: React.FC = () => {
                 </div>
                 <h3 className='feature-title'>{benefit.title}</h3>
                 <p className='benefit-description'>{benefit.desc}</p>
-              </motion.div>
+              </GlassmorphicCard>
             ))}
           </div>
         </div>
       </section>
+
       <section className='section'>
         <div className='container-medium'>
           <motion.div
@@ -303,7 +300,7 @@ const Home: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className='btn-cta'
-              onClick={navigateToTrip}>
+              onClick={navigateToCreateTrip}>
               <span>Start Your Journey</span>
               <ArrowForward style={{ width: '24px', height: '24px' }} />
             </motion.button>
