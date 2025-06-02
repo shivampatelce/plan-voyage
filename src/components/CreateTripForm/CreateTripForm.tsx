@@ -110,7 +110,7 @@ const CreateTripForm = () => {
           sx={{
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             borderRadius: '50px',
-            padding: '16px 48px',
+            padding: '8px 40px',
             fontSize: '1.1rem',
             fontWeight: 700,
             textTransform: 'none',

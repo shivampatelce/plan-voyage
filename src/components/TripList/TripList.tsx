@@ -3,6 +3,8 @@ import './TripList.css';
 import GlassmorphicCard from '../ui/GlassmorphicCard/GlassmorphicCard';
 import { Box, Typography } from '@mui/material';
 import { FlightTakeoff } from '@mui/icons-material';
+import { useNavigate } from 'react-router';
+import { ROUTE_PATH } from '../../const/RoutePath';
 
 interface Trip {
   id: number;
@@ -13,6 +15,7 @@ interface Trip {
 
 const TripList: React.FC = () => {
   const [trips, setTrips] = useState<Trip[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTrips([
@@ -84,7 +87,6 @@ const TripList: React.FC = () => {
             <div
               key={trip.id}
               className='trip-card'>
-              {/* Image Section */}
               <div className='trip-image-container'>
                 <img
                   src={trip.image}
@@ -93,13 +95,11 @@ const TripList: React.FC = () => {
                 />
                 <div className='trip-image-overlay' />
 
-                {/* Floating date badge */}
                 <div className='trip-date-badge'>
                   <span className='trip-date-text'>📅 {trip.date}</span>
                 </div>
               </div>
 
-              {/* Content Section */}
               <div className='trip-content'>
                 <h3 className='trip-title'>{trip.title}</h3>
 
@@ -113,10 +113,8 @@ const TripList: React.FC = () => {
                 </div>
               </div>
 
-              {/* Decorative gradient overlay */}
               <div className='trip-gradient-overlay' />
 
-              {/* Animated border */}
               <div className='trip-animated-border'>
                 <div className='trip-border-gradient' />
               </div>
@@ -124,9 +122,12 @@ const TripList: React.FC = () => {
           ))}
         </div>
 
-        {/* Add new trip card */}
         <div className='add-trip-container'>
-          <button className='add-trip-button'>
+          <button
+            className='add-trip-button'
+            onClick={() => {
+              navigate(`/${ROUTE_PATH.CREATE_TRIP}`);
+            }}>
             <div className='add-trip-icon'>
               <span className='plus-icon'>+</span>
             </div>

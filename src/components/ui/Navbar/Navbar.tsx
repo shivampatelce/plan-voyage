@@ -77,17 +77,30 @@ const Navbar: React.FC = () => {
             )}
 
             {keycloak.authenticated ? (
-              <motion.button
-                className='nav-button logout-button'
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  logout();
-                }}>
-                Logout
-              </motion.button>
+              <>
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className='nav-button'
+                  onClick={() => {
+                    navigate(ROUTE_PATH.TRIPS);
+                  }}>
+                  Your Trips
+                </motion.button>
+                <motion.button
+                  className='nav-button logout-button'
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    logout();
+                  }}>
+                  Logout
+                </motion.button>
+              </>
             ) : (
               <motion.button
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -140,13 +153,22 @@ const Navbar: React.FC = () => {
               )}
 
               {keycloak.authenticated ? (
-                <button
-                  className='mobile-nav-button logout-button'
-                  onClick={() => {
-                    logout();
-                  }}>
-                  Logout
-                </button>
+                <>
+                  <button
+                    className='mobile-nav-button'
+                    onClick={() => {
+                      navigate(ROUTE_PATH.TRIPS);
+                    }}>
+                    Your Trips
+                  </button>
+                  <button
+                    className='mobile-nav-button logout-button'
+                    onClick={() => {
+                      logout();
+                    }}>
+                    Logout
+                  </button>
+                </>
               ) : (
                 <button
                   className='mobile-nav-button'
