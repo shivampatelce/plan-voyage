@@ -4,6 +4,7 @@ import Trips from './pages/Trips/Trips';
 import App from './App';
 import { ROUTE_PATH } from './const/RoutePath';
 import { checkAuthentication } from './util/auth';
+import CreateTrip from './pages/CreateTrip/CreateTrip';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,11 @@ const router = createBrowserRouter([
       {
         path: `/${ROUTE_PATH.TRIPS}`,
         element: <Trips />,
+        loader: checkAuthentication,
+      },
+      {
+        path: `/${ROUTE_PATH.CREATE_TRIP}`,
+        element: <CreateTrip />,
         loader: checkAuthentication,
       },
     ],

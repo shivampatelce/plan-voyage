@@ -10,8 +10,9 @@ import {
 import { LocationOn, DateRange, FlightTakeoff } from '@mui/icons-material';
 import GlassmorphicCard from '../ui/GlassmorphicCard/GlassmorphicCard';
 import FilledFormControl from '../ui/FilledFormControl/FilledFormControl';
+import './CreateTripForm.css';
 
-const CreateTrip = () => {
+const CreateTripForm = () => {
   const [location, setLocation] = useState('');
   const [dates, setDates] = useState('');
 
@@ -128,4 +129,4 @@ const CreateTrip = () => {
   );
 };
 
-export default CreateTrip;
+export default CreateTripForm;

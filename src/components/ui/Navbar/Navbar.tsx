@@ -22,9 +22,9 @@ const Navbar: React.FC = () => {
       });
   };
 
-  const navigateToTrip = () => {
+  const navigateToCreateTrip = () => {
     if (keycloak.authenticated) {
-      return navigate(ROUTE_PATH.TRIPS);
+      return navigate(ROUTE_PATH.CREATE_TRIP);
     }
     keycloak.login();
   };
@@ -57,7 +57,7 @@ const Navbar: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className='nav-button'
-                onClick={navigateToTrip}>
+                onClick={navigateToCreateTrip}>
                 Get Started
               </motion.button>
             )}
@@ -126,7 +126,7 @@ const Navbar: React.FC = () => {
               {location.pathname === '/' ? (
                 <button
                   className='mobile-nav-button'
-                  onClick={navigateToTrip}>
+                  onClick={navigateToCreateTrip}>
                   Get Started
                 </button>
               ) : (

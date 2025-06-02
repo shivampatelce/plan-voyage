@@ -22,9 +22,9 @@ import GlassmorphicCard from '../../components/ui/GlassmorphicCard/GlassmorphicC
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
-  const navigateToTrip = () => {
+  const navigateToCreateTrip = () => {
     if (keycloak.authenticated) {
-      return navigate(ROUTE_PATH.TRIPS);
+      return navigate(ROUTE_PATH.CREATE_TRIP);
     }
     keycloak.login();
   };
@@ -135,7 +135,7 @@ const Home: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className='btn-primary'
-              onClick={navigateToTrip}>
+              onClick={navigateToCreateTrip}>
               <span>Start Planning</span>
               <ArrowForward style={{ width: '20px', height: '20px' }} />
             </motion.button>
@@ -300,7 +300,7 @@ const Home: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className='btn-cta'
-              onClick={navigateToTrip}>
+              onClick={navigateToCreateTrip}>
               <span>Start Your Journey</span>
               <ArrowForward style={{ width: '24px', height: '24px' }} />
             </motion.button>
