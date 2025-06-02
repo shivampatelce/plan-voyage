@@ -10,11 +10,6 @@ const Trips: React.FC = () => {
           <CreateTrip />
         </div>
       </section>
-      <section className='trip-list'>
-        <div className='container-max text-center'>
-          <h2>Trip List</h2>
-        </div>
-      </section>
     </>
   );
 };
