@@ -13,7 +13,7 @@ import {
   Speed,
   Star,
 } from '@mui/icons-material';
-import './home.css';
+import './Home.css';
 import { useNavigate } from 'react-router';
 import { ROUTE_PATH } from '../../const/RoutePath';
 import keycloak from '../../keycloak-config';

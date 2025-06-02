@@ -7,7 +7,15 @@ import {
 import { motion } from 'framer-motion';
 
 type GlassmorphicCardProps = React.PropsWithChildren<{
-  variant?: 'outlined' | 'elevation';
+  styleVariant?:
+    | 'default'
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'minimal'
+    | 'bold';
   size?: 'small' | 'medium' | 'large';
   hover?: boolean;
   sx?: SxProps<Theme>;
@@ -17,7 +25,7 @@ type GlassmorphicCardProps = React.PropsWithChildren<{
 
 const GlassmorphicCard = ({
   children,
-  variant = 'elevation',
+  styleVariant = 'default',
   size = 'medium',
   hover = true,
   sx = {},
@@ -36,7 +44,6 @@ const GlassmorphicCard = ({
     overflow: 'hidden',
   };
 
-  // Hover effects
   const hoverStyles = hover
     ? {
         '&:hover': {
@@ -47,7 +54,6 @@ const GlassmorphicCard = ({
       }
     : {};
 
-  // Size variants
   const sizeStyles = {
     small: {
       padding: '24px',
@@ -63,10 +69,8 @@ const GlassmorphicCard = ({
     },
   };
 
-  // Style variants
   const variantStyles = {
     default: {},
-
     primary: {
       background:
         'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.15) 100%)',
@@ -78,7 +82,6 @@ const GlassmorphicCard = ({
           }
         : {},
     },
-
     secondary: {
       background:
         'linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(236, 72, 153, 0.15) 100%)',
@@ -90,7 +93,6 @@ const GlassmorphicCard = ({
           }
         : {},
     },
-
     success: {
       background:
         'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(21, 128, 61, 0.15) 100%)',
@@ -102,7 +104,6 @@ const GlassmorphicCard = ({
           }
         : {},
     },
-
     warning: {
       background:
         'linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(245, 158, 11, 0.15) 100%)',
@@ -114,7 +115,6 @@ const GlassmorphicCard = ({
           }
         : {},
     },
-
     error: {
       background:
         'linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.15) 100%)',
@@ -126,7 +126,6 @@ const GlassmorphicCard = ({
           }
         : {},
     },
-
     minimal: {
       background: 'rgba(255, 255, 255, 0.08)',
       backdropFilter: 'blur(10px)',
@@ -139,7 +138,6 @@ const GlassmorphicCard = ({
           }
         : {},
     },
-
     bold: {
       background:
         'linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%)',
@@ -155,13 +153,12 @@ const GlassmorphicCard = ({
     },
   };
 
-  // Combine all styles
   const combinedStyles = {
     ...baseStyles,
     ...sizeStyles[size],
-    ...variantStyles[variant],
+    ...variantStyles[styleVariant],
     ...hoverStyles,
-    ...sx, // Allow custom styles to override
+    ...sx,
   };
 
   return (
@@ -172,7 +169,7 @@ const GlassmorphicCard = ({
       whileHover={{ y: -10, scale: 1.05 }}
       transition={transition}>
       <MuiCard
-        sx={combinedStyles}
+        sx={combinedStyles as SxProps<Theme>}
         {...props}>
         {children}
       </MuiCard>
