@@ -4,7 +4,7 @@ import { Flight, Menu, Close } from '@mui/icons-material';
 import './Navbar.css';
 import { useLocation, useNavigate } from 'react-router';
 import { ROUTE_PATH } from '../../../const/RoutePath';
-import keycloakConfig from '../../../keycloak-config';
+import keycloak from '../../../keycloak-config';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,7 +12,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
 
   const logout = () => {
-    keycloakConfig
+    keycloak
       .logout()
       .then(() => {
         navigate(ROUTE_PATH.HOME);
@@ -23,10 +23,10 @@ const Navbar: React.FC = () => {
   };
 
   const navigateToTrip = () => {
-    if (keycloakConfig.authenticated) {
+    if (keycloak.authenticated) {
       return navigate(ROUTE_PATH.TRIPS);
     }
-    keycloakConfig.login();
+    keycloak.login();
   };
 
   return (
@@ -76,7 +76,7 @@ const Navbar: React.FC = () => {
               </motion.button>
             )}
 
-            {keycloakConfig.authenticated ? (
+            {keycloak.authenticated ? (
               <motion.button
                 className='nav-button logout-button'
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -96,7 +96,7 @@ const Navbar: React.FC = () => {
                 whileTap={{ scale: 0.95 }}
                 className='nav-button'
                 onClick={() => {
-                  keycloakConfig.login();
+                  keycloak.login();
                 }}>
                 Log In
               </motion.button>
@@ -139,7 +139,7 @@ const Navbar: React.FC = () => {
                 </button>
               )}
 
-              {keycloakConfig.authenticated ? (
+              {keycloak.authenticated ? (
                 <button
                   className='mobile-nav-button logout-button'
                   onClick={() => {
@@ -151,7 +151,7 @@ const Navbar: React.FC = () => {
                 <button
                   className='mobile-nav-button'
                   onClick={() => {
-                    keycloakConfig.login();
+                    keycloak.login();
                   }}>
                   Log In
                 </button>

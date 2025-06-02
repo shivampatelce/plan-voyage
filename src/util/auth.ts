@@ -1,8 +1,8 @@
 import { redirect } from 'react-router';
-import keycloakConfig from '../keycloak-config';
+import keycloak from '../keycloak-config';
 
 export function checkAuthentication() {
-  if (keycloakConfig.authenticated) {
+  if (keycloak.authenticated) {
     return true;
   }
   return redirect('/');

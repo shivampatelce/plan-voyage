@@ -16,16 +16,16 @@ import {
 import './home.css';
 import { useNavigate } from 'react-router';
 import { ROUTE_PATH } from '../../const/RoutePath';
-import keycloakConfig from '../../keycloak-config';
+import keycloak from '../../keycloak-config';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
 
   const navigateToTrip = () => {
-    if (keycloakConfig.authenticated) {
+    if (keycloak.authenticated) {
       return navigate(ROUTE_PATH.TRIPS);
     }
-    keycloakConfig.login();
+    keycloak.login();
   };
 
   const features = [
