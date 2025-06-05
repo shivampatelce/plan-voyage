@@ -6,8 +6,8 @@ import { ROUTE_PATH } from './const/RoutePath';
 import { checkAuthentication } from './util/auth';
 import CreateTrip from './pages/CreateTrip/CreateTrip';
 import Trip from './pages/Trip/Trip';
-import TripDescription from './components/TripDescription/TripDescription';
 import Invite from './components/Invite/Invite';
+import TripInfo from './components/TripInfo/TripInfo';
 
 const router = createBrowserRouter([
   {
@@ -30,8 +30,8 @@ const router = createBrowserRouter([
         element: <Trip />,
         children: [
           {
-            path: `/${ROUTE_PATH.TRIP_DESCRIPTION}`,
-            element: <TripDescription />,
+            path: `/${ROUTE_PATH.TRIP_INFO}`,
+            element: <TripInfo />,
           },
           {
             path: `/${ROUTE_PATH.INVITE}`,

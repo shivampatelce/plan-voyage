@@ -1,7 +1,7 @@
 import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import type React from 'react';
 import './TripSidebar.css';
-import { NavLink } from 'react-router';
+import { NavLink, useLocation } from 'react-router';
 import { ROUTE_PATH } from '../../const/RoutePath';
 import CloseIcon from '@mui/icons-material/Close';
 import { Flight } from '@mui/icons-material';
@@ -9,10 +9,12 @@ import { Flight } from '@mui/icons-material';
 const TripSidebar: React.FC<{
   onCloseSidebar: any;
 }> = ({ onCloseSidebar }) => {
+  const location = useLocation();
+
   const tripSidebarList = [
     {
-      path: ROUTE_PATH.TRIP_DESCRIPTION,
-      title: 'Description',
+      path: ROUTE_PATH.TRIP_INFO,
+      title: 'Trip Info',
     },
     {
       path: ROUTE_PATH.INVITE,
@@ -87,12 +89,21 @@ const TripSidebar: React.FC<{
             <ListItem>
               <ListItemButton>
                 <ListItemText
-                  primary={title}
                   sx={{
-                    color: 'white',
+                    color:
+                      location.pathname == `/${path}` ? '#60a5fa' : 'white',
                   }}
+                  primary={title}
                 />
               </ListItemButton>
+              {location.pathname == `/${path}` && (
+                <Flight
+                  sx={{
+                    marginRight: '6px',
+                  }}
+                  className='logo-icon'
+                />
+              )}
             </ListItem>
           </NavLink>
         ))}
