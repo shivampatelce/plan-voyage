@@ -5,7 +5,7 @@
   right: 0;
   z-index: 50;
   backdrop-filter: blur(12px);
-  background-color: var(--header-background);
+  background: var(--header-background);
   border-bottom: 1px solid var(--header-border-color);
 }
 
@@ -94,13 +94,13 @@
 }
 
 .mobile-menu-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--trip-card-background);
 }
 
 .mobile-nav {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--trip-card-background);
 }
 
 .mobile-nav-content {

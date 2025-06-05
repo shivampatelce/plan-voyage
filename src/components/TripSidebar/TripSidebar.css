@@ -1,0 +1,228 @@
+.trip-sidebar-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.trip-sidebar-container {
+  height: 100vh;
+  background: var(--app-background);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid var(--card-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.trip-sidebar-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(5px);
+}
+
+.trip-sidebar-list {
+  position: relative;
+  z-index: 1;
+  padding: 0 !important;
+}
+
+.trip-sidebar-header {
+  padding: 20px 16px !important;
+  background: var(--trip-card-background);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--trip-card-border);
+}
+
+.trip-sidebar-logo-section {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.trip-sidebar-avatar {
+  background: var(--gradient-text) !important;
+  margin-right: 12px !important;
+  width: 40px !important;
+  height: 40px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.trip-sidebar-title {
+  color: white !important;
+  font-weight: 700 !important;
+  font-size: 1.1rem !important;
+  background: var(--gradient-text) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.trip-sidebar-subtitle {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 0.75rem !important;
+}
+
+.trip-sidebar-close-btn {
+  color: white !important;
+  padding: 8px !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.trip-sidebar-close-btn:hover {
+  background: var(--trip-card-background) !important;
+  transform: scale(1.1);
+}
+
+.trip-sidebar-nav-container {
+  padding: 8px 0;
+}
+
+.trip-sidebar-nav-item {
+  padding: 4px 16px !important;
+  margin: 2px 8px !important;
+  border-radius: 12px !important;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease !important;
+}
+
+.trip-sidebar-nav-item:hover {
+  background: var(--trip-card-background) !important;
+  transform: translateX(4px);
+}
+
+.trip-sidebar-nav-item.active {
+  background: var(--trip-card-background) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.trip-sidebar-nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--gradient-text);
+  border-radius: 0 4px 4px 0;
+}
+
+.trip-sidebar-nav-button {
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+}
+
+.trip-sidebar-nav-button:hover {
+  background: transparent !important;
+}
+
+.trip-sidebar-nav-icon {
+  margin-right: 16px !important;
+  color: var(--trip-status-color) !important;
+  font-size: 20px !important;
+  transition: all 0.2s ease !important;
+}
+
+.trip-sidebar-nav-icon.active {
+  color: var(--sidebar-active-text-color) !important;
+  filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.5));
+}
+
+.trip-sidebar-nav-text .MuiListItemText-primary {
+  color: white !important;
+  font-weight: 400 !important;
+  font-size: 0.9rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.trip-sidebar-nav-text.active .MuiListItemText-primary {
+  color: var(--sidebar-active-text-color) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
+}
+
+.trip-sidebar-link {
+  text-decoration: none !important;
+  color: inherit;
+  display: block;
+  width: 100%;
+}
+
+.trip-sidebar-link:hover {
+  text-decoration: none;
+}
+
+.trip-sidebar-list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.trip-sidebar-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.trip-sidebar-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.trip-sidebar-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.trip-sidebar-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+@keyframes activeGlow {
+  0% {
+    box-shadow: 0 0 5px rgba(96, 165, 250, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(96, 165, 250, 0.3);
+  }
+}
+
+.gradient-text {
+  background: var(--gradient-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@media (max-width: 768px) {
+  .trip-sidebar-nav-text .MuiListItemText-primary {
+    font-size: 0.85rem !important;
+  }
+
+  .trip-sidebar-avatar {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .trip-sidebar-nav-icon {
+    font-size: 18px !important;
+  }
+
+  .trip-sidebar-header {
+    padding: 16px 12px !important;
+  }
+
+  .trip-sidebar-nav-item {
+    margin: 2px 4px !important;
+    padding: 2px 12px !important;
+  }
+}
+
+@supports not (backdrop-filter: blur(10px)) {
+  .trip-sidebar-container {
+    background: rgba(102, 126, 234, 0.95) !important;
+  }
+}

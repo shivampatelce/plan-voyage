@@ -49,7 +49,6 @@ const Navbar: React.FC = () => {
           </motion.div>
 
           <nav className='nav-desktop'>
-            {/* Display Get started button for home page only */}
             {location.pathname === '/' && (
               <motion.button
                 initial={{ opacity: 0, scale: 0.8 }}

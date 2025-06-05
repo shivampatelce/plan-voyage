@@ -109,7 +109,16 @@ const TripList: React.FC = () => {
                     <span className='status-text'>Upcoming</span>
                   </div>
 
-                  <button className='trip-button'>View Details</button>
+                  <button
+                    className='trip-button'
+                    onClick={() => {
+                      navigate(`/${ROUTE_PATH.TRIP_INFO}`);
+                    }}
+                    style={{
+                      zIndex: 10,
+                    }}>
+                    Manage Trip
+                  </button>
                 </div>
               </div>
 
