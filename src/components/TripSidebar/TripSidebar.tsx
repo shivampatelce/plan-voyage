@@ -1,15 +1,17 @@
 import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import type React from 'react';
 import './TripSidebar.css';
+import { NavLink } from 'react-router';
+import { ROUTE_PATH } from '../../const/RoutePath';
 
 const TripSidebar: React.FC = () => {
   const tripSidebarList = [
     {
-      path: 'description',
+      path: ROUTE_PATH.TRIP_DESCRIPTION,
       title: 'Description',
     },
     {
-      path: 'invite-friends',
+      path: ROUTE_PATH.INVITE,
       title: 'Invite Friends',
     },
     {
@@ -41,14 +43,22 @@ const TripSidebar: React.FC = () => {
   return (
     <>
       <List>
-        {tripSidebarList.map(({ title }) => (
-          <ListItem
+        {tripSidebarList.map(({ title, path }) => (
+          <NavLink
             key={title}
-            disablePadding>
-            <ListItemButton>
-              <ListItemText primary={title} />
-            </ListItemButton>
-          </ListItem>
+            to={`/${path}`}
+            className='trip-sidebar-link'>
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemText
+                  primary={title}
+                  sx={{
+                    color: 'white',
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
         ))}
       </List>
     </>

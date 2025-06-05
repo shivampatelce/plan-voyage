@@ -2,6 +2,7 @@ import type React from 'react';
 import './Trip.css';
 import { Grid } from '@mui/material';
 import TripSidebar from '../../components/TripSidebar/TripSidebar';
+import { Outlet } from 'react-router';
 
 const Trip: React.FC = () => {
   return (
@@ -32,7 +33,7 @@ const Trip: React.FC = () => {
           }}>
           <section className='trip'>
             <div className='container-max text-center'>
-              <h1>Trip page</h1>
+              <Outlet />
             </div>
           </section>
         </Grid>
