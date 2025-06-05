@@ -3,8 +3,12 @@ import type React from 'react';
 import './TripSidebar.css';
 import { NavLink } from 'react-router';
 import { ROUTE_PATH } from '../../const/RoutePath';
+import CloseIcon from '@mui/icons-material/Close';
+import { Flight } from '@mui/icons-material';
 
-const TripSidebar: React.FC = () => {
+const TripSidebar: React.FC<{
+  onCloseSidebar: any;
+}> = ({ onCloseSidebar }) => {
   const tripSidebarList = [
     {
       path: ROUTE_PATH.TRIP_DESCRIPTION,
@@ -43,12 +47,44 @@ const TripSidebar: React.FC = () => {
   return (
     <>
       <List>
+        <ListItem>
+          <ListItemButton>
+            <Flight
+              sx={{
+                marginRight: '6px',
+              }}
+              className='logo-icon'
+            />
+            <ListItemText
+              className='logo-text gradient-text'
+              primary='Plan Voyage'
+              sx={{
+                color: 'white',
+              }}
+            />
+          </ListItemButton>
+
+          <ListItemButton
+            sx={{
+              marginLeft: 'auto',
+              width: 'fit-content',
+            }}
+            onClick={onCloseSidebar}>
+            <CloseIcon
+              sx={{
+                marginLeft: 'auto',
+                width: 'fit-content',
+              }}
+            />
+          </ListItemButton>
+        </ListItem>
+
         {tripSidebarList.map(({ title, path }) => (
           <NavLink
             key={title}
             to={`/${path}`}
             className='trip-sidebar-link'>
-            <ListItem disablePadding>
+            <ListItem>
               <ListItemButton>
                 <ListItemText
                   primary={title}
