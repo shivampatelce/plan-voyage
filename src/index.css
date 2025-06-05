@@ -2,6 +2,45 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+
+  --app-background: linear-gradient(135deg, #0f172a 0%, #581c87 50%, #0f172a 100%);
+
+  --gradient-text: linear-gradient(135deg, #60a5fa, #a855f7);
+   --secondary-text-color: white;
+
+  --btn-primary: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  --btn-primary-text-color: white;
+
+  --header-background: rgba(255, 255, 255, 0.05);
+  --header-border-color: rgba(255, 255, 255, 0.1);
+
+  --card-background: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(255, 255, 255, 0.1);
+
+  --trip-card-background: rgba(255, 255, 255, 0.1);
+  --trip-card-border: rgba(255, 255, 255, 0.2);
+  --trip-card-box-shadow: rgba(0, 0, 0, 0.25);
+
+  --trip-card-hover-background: rgba(255, 255, 255, 0.15);
+  --trip-card-hover-box-shadow: rgba(147, 51, 234, 0.25);
+
+  --trip-image-overlay-background: rgba(0, 0, 0, 0.6);
+  --trip-date-badge-background: rgba(255, 255, 255, 0.2);
+  --trip-date-badge-border-color: rgba(255, 255, 255, 0.3);
+  --trip-date-text-color: black;
+  --trip-title-color: white;
+  --trip-status-color: rgba(255, 255, 255, 0.8);
+  --trip-status-dot-background: linear-gradient(135deg, #f472b6, #a855f7);
+  --trip-button-box-shadow: rgba(0, 0, 0, 0.1);
+  --trip-background-overlay: linear-gradient(
+    135deg,
+    rgba(236, 72, 153, 0.05),
+    rgba(139, 92, 246, 0.05)
+  );
+
+  --add-trip-button-background: rgba(255, 255, 255, 0.1);
+  --add-trip-button-icon: linear-gradient(135deg, #ec4899, #8b5cf6);
+
 }
 
 * {
@@ -22,21 +61,21 @@ h1 {
 /* Base Styles */
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #581c87 50%, #0f172a 100%);
-  color: white;
+  background: var(--app-background);
+  color: var(--secondary-text-color);
   overflow: hidden;
   font-family: system-ui, -apple-system, sans-serif;
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #60a5fa, #a855f7);
+  background: var(--gradient-text);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gradient-text-green {
-  background: linear-gradient(135deg, #10b981, #3b82f6);
+  background: var(--gradient-text);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -44,26 +83,11 @@ h1 {
 
 /* Button Styles */
 .btn-primary {
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: var(--btn-primary);
   padding: 12px 32px;
   border-radius: 9999px;
   border: none;
-  color: white;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-}
-
-.btn-secondary {
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  padding: 12px 32px;
-  border-radius: 9999px;
-  background: transparent;
-  color: white;
+  color: var(--btn-primary-text-color);
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
@@ -74,11 +98,11 @@ h1 {
 }
 
 .btn-cta {
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: var(--btn-primary);
   padding: 16px 48px;
   border-radius: 9999px;
   border: none;
-  color: white;
+  color: var(--btn-primary-text-color);
   font-size: 1.25rem;
   font-weight: 600;
   cursor: pointer;
