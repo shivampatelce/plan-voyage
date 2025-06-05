@@ -7,7 +7,7 @@ import { useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 
 const Trip: React.FC = () => {
-  const [isSidebarOpened, setIsSidebarOpened] = useState(true);
+  const [isSidebarOpened, setIsSidebarOpened] = useState(false);
   const MIN_PAGE_HEIGHT = '90vh';
 
   return (
