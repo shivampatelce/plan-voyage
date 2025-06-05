@@ -159,15 +159,15 @@
   border-radius: 9999px;
   border: none;
   cursor: pointer;
-  opacity: 0;
-  transform: translateY(8px);
+  opacity: 1;
+  transform: translateY(0);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .trip-card:hover .trip-button {
-  opacity: 1;
-  transform: translateY(0);
+  background: linear-gradient(135deg, #db2777, #7c3aed);
+  transform: scale(1.05);
 }
 
 .trip-button:hover {
