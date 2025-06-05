@@ -87,11 +87,6 @@ const TripSidebar: React.FC<{
                 className='trip-sidebar-title'>
                 Plan Voyage
               </Typography>
-              <Typography
-                variant='caption'
-                className='trip-sidebar-subtitle'>
-                Your travel companion
-              </Typography>
             </Box>
           </Box>
 
@@ -133,8 +128,6 @@ const TripSidebar: React.FC<{
             );
           })}
         </Box>
-
-        <Box className='trip-sidebar-bottom-accent' />
       </List>
     </Box>
   );

@@ -5,9 +5,9 @@
 
 .trip-sidebar-container {
   height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--app-background);
   backdrop-filter: blur(10px);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid var(--card-border);
   position: relative;
   overflow: hidden;
 }
@@ -31,9 +31,9 @@
 
 .trip-sidebar-header {
   padding: 20px 16px !important;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--trip-card-background);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--trip-card-border);
 }
 
 .trip-sidebar-logo-section {
@@ -43,7 +43,7 @@
 }
 
 .trip-sidebar-avatar {
-  background: linear-gradient(45deg, #fe6b8b 30%, #ff8e53 90%) !important;
+  background: var(--gradient-text) !important;
   margin-right: 12px !important;
   width: 40px !important;
   height: 40px !important;
@@ -54,7 +54,7 @@
   color: white !important;
   font-weight: 700 !important;
   font-size: 1.1rem !important;
-  background: linear-gradient(45deg, #fe6b8b 30%, #ff8e53 90%) !important;
+  background: var(--gradient-text) !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
@@ -73,7 +73,7 @@
 }
 
 .trip-sidebar-close-btn:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: var(--trip-card-background) !important;
   transform: scale(1.1);
 }
 
@@ -91,12 +91,12 @@
 }
 
 .trip-sidebar-nav-item:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: var(--trip-card-background) !important;
   transform: translateX(4px);
 }
 
 .trip-sidebar-nav-item.active {
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: var(--trip-card-background) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
@@ -107,7 +107,7 @@
   top: 0;
   bottom: 0;
   width: 4px;
-  background: linear-gradient(45deg, #fe6b8b 30%, #ff8e53 90%);
+  background: var(--gradient-text);
   border-radius: 0 4px 4px 0;
 }
 
@@ -122,13 +122,13 @@
 
 .trip-sidebar-nav-icon {
   margin-right: 16px !important;
-  color: rgba(255, 255, 255, 0.8) !important;
+  color: var(--trip-status-color) !important;
   font-size: 20px !important;
   transition: all 0.2s ease !important;
 }
 
 .trip-sidebar-nav-icon.active {
-  color: #60a5fa !important;
+  color: var(--sidebar-active-text-color) !important;
   filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.5));
 }
 
@@ -140,19 +140,9 @@
 }
 
 .trip-sidebar-nav-text.active .MuiListItemText-primary {
-  color: #60a5fa !important;
+  color: var(--sidebar-active-text-color) !important;
   font-weight: 600 !important;
   text-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
-}
-
-.trip-sidebar-bottom-accent {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent);
-  pointer-events: none;
 }
 
 .trip-sidebar-link {
@@ -201,7 +191,7 @@
 }
 
 .gradient-text {
-  background: linear-gradient(45deg, #fe6b8b 30%, #ff8e53 90%);
+  background: var(--gradient-text);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

@@ -3,15 +3,25 @@
   line-height: 1.5;
   font-weight: 400;
 
-  --app-background: linear-gradient(135deg, #0f172a 0%, #581c87 50%, #0f172a 100%);
+  --app-background: linear-gradient(
+    135deg,
+    #0f172a 0%,
+    #581c87 50%,
+    #0f172a 100%
+  );
 
   --gradient-text: linear-gradient(135deg, #60a5fa, #a855f7);
-   --secondary-text-color: white;
+  --secondary-text-color: white;
 
   --btn-primary: linear-gradient(135deg, #3b82f6, #8b5cf6);
   --btn-primary-text-color: white;
 
-  --header-background: rgba(255, 255, 255, 0.05);
+  --header-background: linear-gradient(
+    135deg,
+    #0f172a 0%,
+    #581c87 50%,
+    #0f172a 100%
+  );
   --header-border-color: rgba(255, 255, 255, 0.1);
 
   --card-background: rgba(255, 255, 255, 0.05);
@@ -41,6 +51,7 @@
   --add-trip-button-background: rgba(255, 255, 255, 0.1);
   --add-trip-button-icon: linear-gradient(135deg, #ec4899, #8b5cf6);
 
+  --sidebar-active-text-color: #a855f7;
 }
 
 * {

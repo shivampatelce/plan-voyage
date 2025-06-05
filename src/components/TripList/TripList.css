@@ -65,7 +65,12 @@
 .trip-image-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 0%, var(--trip-image-overlay-background), 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--trip-image-overlay-background),
+    100%
+  );
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
@@ -154,12 +159,12 @@
 }
 
 .trip-card:hover .trip-button {
-  background: linear-gradient(135deg, #db2777, #7c3aed);
+  background: var(--btn-primary);
   transform: scale(1.05);
 }
 
 .trip-button:hover {
-  background: linear-gradient(135deg, #db2777, #7c3aed);
+  background: var(--btn-primary);
 }
 
 .trip-gradient-overlay {
