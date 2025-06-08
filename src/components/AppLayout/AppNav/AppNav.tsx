@@ -9,6 +9,9 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import { Menu, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { NavLink } from 'react-router';
+import { ROUTE_PATH } from '@/consts/RoutePath';
 
 export default function AppNav() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -28,11 +31,11 @@ export default function AppNav() {
           <NavigationMenuList>
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
-                <a
-                  href='#'
+                <NavLink
+                  to={'/'}
                   className='px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors'>
                   <div className='font-medium'>Home</div>
-                </a>
+                </NavLink>
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
@@ -50,11 +53,11 @@ export default function AppNav() {
                   </li>
                   <li>
                     <NavigationMenuLink asChild>
-                      <a
-                        href='#'
+                      <NavLink
+                        to={ROUTE_PATH.TRIPS}
                         className='block p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors'>
-                        <div className='font-medium'>Your Trips List</div>
-                      </a>
+                        <div className='font-medium'>Your Trips</div>
+                      </NavLink>
                     </NavigationMenuLink>
                   </li>
                 </ul>
@@ -62,9 +65,7 @@ export default function AppNav() {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
-                <button className='font-medium text-red-600 hover:text-red-700 px-4 py-2 rounded-md hover:bg-red-50 dark:hover:bg-red-950 transition-colors'>
-                  Logout
-                </button>
+                <Button variant='destructive'>Logout</Button>
               </NavigationMenuLink>
             </NavigationMenuItem>
           </NavigationMenuList>
@@ -90,12 +91,12 @@ export default function AppNav() {
       {isMobileMenuOpen && (
         <div className='absolute top-full left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-lg md:hidden z-50'>
           <div className='px-4 py-2 space-y-1'>
-            <a
-              href='#'
+            <NavLink
+              to={'/'}
               className='block px-3 py-2 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors'
               onClick={() => setIsMobileMenuOpen(false)}>
               Home
-            </a>
+            </NavLink>
 
             <div className='px-3 py-2'>
               <div className='font-medium text-gray-600 dark:text-gray-400 text-sm mb-2'>
@@ -108,20 +109,16 @@ export default function AppNav() {
                   onClick={() => setIsMobileMenuOpen(false)}>
                   Create Your Trip
                 </a>
-                <a
-                  href='#'
+                <NavLink
+                  to={ROUTE_PATH.TRIPS}
                   className='block px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors'
                   onClick={() => setIsMobileMenuOpen(false)}>
-                  Your Trip List
-                </a>
+                  Your Trips
+                </NavLink>
               </div>
             </div>
 
-            <button
-              className='block w-full text-left px-3 py-2 font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 rounded-md transition-colors'
-              onClick={() => setIsMobileMenuOpen(false)}>
-              Logout
-            </button>
+            <Button variant='destructive'>Logout</Button>
           </div>
         </div>
       )}
