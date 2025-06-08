@@ -5,6 +5,7 @@ import AppNav from './AppNav/AppNav';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { PROTECTED_PATH } from '@/consts/ProtectedPath';
+import ScrollToTop from '@/util/ScrollToTop';
 
 const AppLayout: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
@@ -17,6 +18,7 @@ const AppLayout: React.FC = () => {
       </header>
 
       <div className='flex flex-1'>
+        <ScrollToTop />
         <SidebarProvider>
           {PROTECTED_PATH.includes(location.pathname) && (
             <>

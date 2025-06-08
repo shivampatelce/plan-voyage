@@ -8,7 +8,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
-import { Menu, X } from 'lucide-react';
+import { ArrowRight, Menu, Plane, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router';
 import { ROUTE_PATH } from '@/consts/RoutePath';
@@ -44,11 +44,13 @@ export default function AppNav() {
                 <ul className='grid w-[200px] gap-2 p-4'>
                   <li>
                     <NavigationMenuLink asChild>
-                      <a
-                        href='#'
+                      <NavLink
+                        to={ROUTE_PATH.CREATE_TRIP}
                         className='block p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors'>
-                        <div className='font-medium'>Create New Trip</div>
-                      </a>
+                        <div className='flex items-center font-medium'>
+                          Create New Trip <ArrowRight className='ml-2' />
+                        </div>
+                      </NavLink>
                     </NavigationMenuLink>
                   </li>
                   <li>
@@ -56,7 +58,9 @@ export default function AppNav() {
                       <NavLink
                         to={ROUTE_PATH.TRIPS}
                         className='block p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors'>
-                        <div className='font-medium'>Your Trips</div>
+                        <div className='flex items-center font-medium'>
+                          Your Trips <Plane className='ml-2' />
+                        </div>
                       </NavLink>
                     </NavigationMenuLink>
                   </li>
