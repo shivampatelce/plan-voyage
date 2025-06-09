@@ -4,6 +4,8 @@ import AppLayout from './components/AppLayout/AppLayout';
 import { ROUTE_PATH } from './consts/RoutePath';
 import TripList from './pages/TripList';
 import CreateTrip from './pages/CreateTrip';
+import PlanTrip from './pages/PlanTrip';
+import PlanSettings from './components/PlanSettings/PlanSettings';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +20,13 @@ const router = createBrowserRouter([
       {
         path: `/${ROUTE_PATH.CREATE_TRIP}`,
         element: <CreateTrip />,
+      },
+      {
+        path: `/${ROUTE_PATH.PLAN_TRIP}`,
+        element: <PlanTrip />,
+        children: [
+          { path: `/${ROUTE_PATH.SETTING}`, element: <PlanSettings /> },
+        ],
       },
     ],
   },

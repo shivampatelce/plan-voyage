@@ -9,6 +9,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Calendar, MapPin, MoreVertical, Settings, Trash2 } from 'lucide-react';
 import type { Trip } from '@/types/Trip';
+import { useNavigate } from 'react-router';
+import { ROUTE_PATH } from '@/consts/RoutePath';
 
 const TripCard = ({
   trip,
@@ -17,6 +19,7 @@ const TripCard = ({
   trip: Trip;
   isPreviousTrip?: boolean;
 }) => {
+  const navigate = useNavigate();
   const formatDateRange = (start: Date | string, end: Date | string) => {
     const startDate = new Date(start);
     const endDate = new Date(end);
@@ -86,7 +89,11 @@ const TripCard = ({
             {formatDateRange(trip.startDate, trip.endDate)}
           </span>
         </div>
-        <Button className='mt-4'>
+        <Button
+          onClick={() => {
+            navigate(`/${ROUTE_PATH.SETTING}`);
+          }}
+          className='mt-4'>
           {!isPreviousTrip ? 'Plan Your Trip' : 'Check Your Trip'}
         </Button>
       </CardContent>
