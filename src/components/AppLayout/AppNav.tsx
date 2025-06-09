@@ -10,14 +10,30 @@ import {
 } from '@/components/ui/navigation-menu';
 import { ArrowRight, Menu, Plane, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { NavLink } from 'react-router';
+import { NavLink, useNavigate } from 'react-router';
 import { ROUTE_PATH } from '@/consts/RoutePath';
+import keycloak from '@/keycloak-config';
 
 export default function AppNav() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const navigateToCreateTrip = () => {
+    if (keycloak.authenticated) {
+      return navigate(ROUTE_PATH.CREATE_TRIP);
+    }
+    keycloak.login();
+  };
+
+  const navigateToTripList = () => {
+    if (keycloak.authenticated) {
+      return navigate(ROUTE_PATH.TRIPS);
+    }
+    keycloak.login();
   };
 
   return (
@@ -44,39 +60,46 @@ export default function AppNav() {
                 <ul className='grid w-[200px] gap-2 p-4'>
                   <li>
                     <NavigationMenuLink asChild>
-                      <NavLink
-                        to={ROUTE_PATH.CREATE_TRIP}
+                      <Button
+                        onClick={navigateToCreateTrip}
                         className='block p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors'>
                         <div className='flex items-center font-medium'>
                           Create New Trip <ArrowRight className='ml-2' />
                         </div>
-                      </NavLink>
+                      </Button>
                     </NavigationMenuLink>
                   </li>
                   <li>
                     <NavigationMenuLink asChild>
-                      <NavLink
-                        to={ROUTE_PATH.TRIPS}
+                      <Button
+                        onClick={navigateToTripList}
                         className='block p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors'>
                         <div className='flex items-center font-medium'>
                           Your Trips <Plane className='ml-2' />
                         </div>
-                      </NavLink>
+                      </Button>
                     </NavigationMenuLink>
                   </li>
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Button>Login</Button>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild>
-                <Button variant='destructive'>Logout</Button>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
+            {!keycloak.authenticated ? (
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Button onClick={() => keycloak.login()}>Login</Button>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            ) : (
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Button
+                    variant='destructive'
+                    onClick={() => keycloak.logout()}>
+                    Logout
+                  </Button>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            )}
           </NavigationMenuList>
         </NavigationMenu>
         <ModeToggle />

@@ -15,9 +15,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useNavigate } from 'react-router';
 import { ROUTE_PATH } from '@/consts/RoutePath';
+import keycloak from '@/keycloak-config';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+
+  const navigateToCreateTrip = () => {
+    if (keycloak.authenticated) {
+      return navigate(ROUTE_PATH.CREATE_TRIP);
+    }
+    keycloak.login();
+  };
 
   const features = [
     {
@@ -88,7 +96,7 @@ const Home: React.FC = () => {
               </div>
 
               <div className='flex flex-col sm:flex-row gap-4'>
-                <Button onClick={() => navigate(ROUTE_PATH.CREATE_TRIP)}>
+                <Button onClick={navigateToCreateTrip}>
                   <span>Start Planning</span>
                   <ArrowRight className='h-5 w-5' />
                 </Button>
@@ -154,11 +162,11 @@ const Home: React.FC = () => {
             trip planning. Your perfect adventure awaits.
           </p>
           <div className='flex flex-col sm:flex-row gap-4 justify-center'>
-            <Button onClick={() => navigate(ROUTE_PATH.CREATE_TRIP)}>
+            <Button onClick={navigateToCreateTrip}>
               <span>Create New Trip</span>
               <ArrowRight className='h-5 w-5' />
             </Button>
-            <Button onClick={() => navigate(ROUTE_PATH.TRIPS)}>
+            <Button onClick={navigateToCreateTrip}>
               Your Trips
               <Plane className='h-5 w-5' />
             </Button>

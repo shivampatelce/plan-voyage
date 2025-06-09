@@ -6,6 +6,7 @@ import TripList from './pages/TripList';
 import CreateTrip from './pages/CreateTrip';
 import PlanTrip from './pages/PlanTrip';
 import PlanSettings from './components/PlanSettings/PlanSettings';
+import { checkAuthentication } from './components/security/auth';
 
 const router = createBrowserRouter([
   {
@@ -16,14 +17,17 @@ const router = createBrowserRouter([
       {
         path: `/${ROUTE_PATH.TRIPS}`,
         element: <TripList />,
+        loader: checkAuthentication,
       },
       {
         path: `/${ROUTE_PATH.CREATE_TRIP}`,
         element: <CreateTrip />,
+        loader: checkAuthentication,
       },
       {
         path: `/${ROUTE_PATH.PLAN_TRIP}`,
         element: <PlanTrip />,
+        loader: checkAuthentication,
         children: [
           { path: `/${ROUTE_PATH.SETTING}`, element: <PlanSettings /> },
         ],

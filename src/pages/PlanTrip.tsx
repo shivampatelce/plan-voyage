@@ -2,7 +2,11 @@ import type React from 'react';
 import { Outlet } from 'react-router';
 
 const PlanTrip: React.FC = () => {
-  return <Outlet />;
+  return (
+    <div className='p-10'>
+      <Outlet />
+    </div>
+  );
 };
 
 export default PlanTrip;
