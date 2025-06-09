@@ -88,9 +88,7 @@ const Home: React.FC = () => {
               </div>
 
               <div className='flex flex-col sm:flex-row gap-4'>
-                <Button
-                  onClick={() => navigate(ROUTE_PATH.CREATE_TRIP)}
-                  className='bg-blue-600 text-white px-8 py-4 rounded-xl hover:bg-blue-700 transition-all hover:scale-105 flex items-center justify-center space-x-2 font-semibold'>
+                <Button onClick={() => navigate(ROUTE_PATH.CREATE_TRIP)}>
                   <span>Start Planning</span>
                   <ArrowRight className='h-5 w-5' />
                 </Button>
@@ -146,26 +144,21 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className='px-6 py-20 bg-gradient-to-r from-blue-600 to-purple-600'>
+      <section className='p-4'>
         <div className='max-w-4xl mx-auto text-center'>
-          <h2 className='text-4xl font-bold text-white mb-6'>
+          <h2 className='text-4xl font-bold mb-6'>
             Ready to Start Your Next Adventure?
           </h2>
-          <p className='text-xl text-blue-100 mb-8 max-w-2xl mx-auto'>
+          <p className='text-xl mb-8 max-w-2xl mx-auto'>
             Join thousands of travelers who've discovered the joy of effortless
             trip planning. Your perfect adventure awaits.
           </p>
           <div className='flex flex-col sm:flex-row gap-4 justify-center'>
-            <Button
-              onClick={() => navigate(ROUTE_PATH.CREATE_TRIP)}
-              className='bg-white text-blue-600 px-8 py-4 rounded-xl hover:bg-gray-50 transition-all hover:scale-105 font-semibold flex items-center justify-center space-x-2'>
+            <Button onClick={() => navigate(ROUTE_PATH.CREATE_TRIP)}>
               <span>Create New Trip</span>
               <ArrowRight className='h-5 w-5' />
             </Button>
-            <Button
-              onClick={() => navigate(ROUTE_PATH.TRIPS)}
-              className='bg-white text-blue-600 px-8 py-4 rounded-xl hover:bg-gray-50 transition-all hover:scale-105 font-semibold flex items-center justify-center space-x-2'>
+            <Button onClick={() => navigate(ROUTE_PATH.TRIPS)}>
               Your Trips
               <Plane className='h-5 w-5' />
             </Button>

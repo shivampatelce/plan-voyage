@@ -69,6 +69,11 @@ export default function AppNav() {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
+                <Button>Login</Button>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
                 <Button variant='destructive'>Logout</Button>
               </NavigationMenuLink>
             </NavigationMenuItem>
