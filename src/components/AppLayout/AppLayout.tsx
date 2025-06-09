@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet, useLocation } from 'react-router';
-import { AppSidebar } from './AppSidebar/AppSidebar';
-import AppNav from './AppNav/AppNav';
+import { AppSidebar } from './AppSidebar';
+import AppNav from './AppNav';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { PROTECTED_PATH } from '@/consts/ProtectedPath';
