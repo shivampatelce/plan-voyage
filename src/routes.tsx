@@ -6,7 +6,7 @@ import TripList from './pages/TripList';
 import CreateTrip from './pages/CreateTrip';
 import PlanTrip from './pages/PlanTrip';
 import PlanSettings from './components/PlanSettings/PlanSettings';
-import { checkAuthentication } from './components/security/auth';
+import RouteProtection from './util/RouteProtection';
 
 const router = createBrowserRouter([
   {
@@ -16,18 +16,33 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       {
         path: `/${ROUTE_PATH.TRIPS}`,
-        element: <TripList />,
-        loader: checkAuthentication,
+        element: (
+          <>
+            <RouteProtection>
+              <TripList />
+            </RouteProtection>
+          </>
+        ),
       },
       {
         path: `/${ROUTE_PATH.CREATE_TRIP}`,
-        element: <CreateTrip />,
-        loader: checkAuthentication,
+        element: (
+          <>
+            <RouteProtection>
+              <CreateTrip />
+            </RouteProtection>
+          </>
+        ),
       },
       {
         path: `/${ROUTE_PATH.PLAN_TRIP}`,
-        element: <PlanTrip />,
-        loader: checkAuthentication,
+        element: (
+          <>
+            <RouteProtection>
+              <PlanTrip />
+            </RouteProtection>
+          </>
+        ),
         children: [
           { path: `/${ROUTE_PATH.SETTING}`, element: <PlanSettings /> },
         ],

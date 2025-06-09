@@ -1,5 +1,4 @@
 import React from 'react';
-
 import type { Trip } from '@/types/Trip';
 import TripCard from '@/components/TripList/TripCard';
 
