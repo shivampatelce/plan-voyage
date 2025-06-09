@@ -135,22 +135,34 @@ export default function AppNav() {
                 Get Started
               </div>
               <div className='pl-4 space-y-1'>
-                <a
-                  href='#'
+                <Button
                   className='block px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors'
-                  onClick={() => setIsMobileMenuOpen(false)}>
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    navigateToCreateTrip();
+                  }}>
                   Create Your Trip
-                </a>
-                <NavLink
-                  to={ROUTE_PATH.TRIPS}
+                </Button>
+                <Button
                   className='block px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors'
-                  onClick={() => setIsMobileMenuOpen(false)}>
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    navigateToTripList();
+                  }}>
                   Your Trips
-                </NavLink>
+                </Button>
               </div>
             </div>
 
-            <Button variant='destructive'>Logout</Button>
+            {!keycloak.authenticated ? (
+              <Button onClick={() => keycloak.login()}>Login</Button>
+            ) : (
+              <Button
+                variant='destructive'
+                onClick={() => keycloak.logout()}>
+                Logout
+              </Button>
+            )}
           </div>
         </div>
       )}
