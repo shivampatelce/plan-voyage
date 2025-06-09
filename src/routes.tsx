@@ -1,9 +1,9 @@
 import { createBrowserRouter } from 'react-router';
-import Home from './pages/Home/Home';
+import Home from './pages/Home';
 import AppLayout from './components/AppLayout/AppLayout';
 import { ROUTE_PATH } from './consts/RoutePath';
-import TripList from './pages/TripList/TripList';
-import CreateTrip from './pages/CreateTrip/CreateTrip';
+import TripList from './pages/TripList';
+import CreateTrip from './pages/CreateTrip';
 
 const router = createBrowserRouter([
   {
