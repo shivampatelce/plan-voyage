@@ -44,7 +44,10 @@ const router = createBrowserRouter([
           </>
         ),
         children: [
-          { path: `/${ROUTE_PATH.OVERVIEW}`, element: <PlanOverview /> },
+          {
+            path: `/${ROUTE_PATH.OVERVIEW}/:tripId`,
+            element: <PlanOverview />,
+          },
         ],
       },
     ],

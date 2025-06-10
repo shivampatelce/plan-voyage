@@ -98,7 +98,7 @@ const TripCard = ({
                 <DropdownMenuItem
                   className='cursor-pointer'
                   onClick={() => {
-                    navigate(`/${ROUTE_PATH.OVERVIEW}`);
+                    navigate(`/${ROUTE_PATH.OVERVIEW}/${trip.tripId}`);
                   }}>
                   <Settings className='mr-2 h-4 w-4' />
                   Plan Your Trip
@@ -130,7 +130,7 @@ const TripCard = ({
           </div>
           <Button
             onClick={() => {
-              navigate(`/${ROUTE_PATH.OVERVIEW}`);
+              navigate(`/${ROUTE_PATH.OVERVIEW}/${trip.tripId}`);
             }}
             className='mt-4'>
             {!isPreviousTrip ? 'Plan Your Trip' : 'Check Your Trip'}

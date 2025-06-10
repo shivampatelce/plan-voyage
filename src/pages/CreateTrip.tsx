@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router';
 import { ROUTE_PATH } from '@/consts/RoutePath';
 import { apiRequest } from '@/util/apiRequest';
 import { API_PATH } from '@/consts/ApiPath';
-import type { CreateTripRequest } from '@/types/Trip';
+import type { CreateTripRequest, Trip } from '@/types/Trip';
 
 const CreateTrip: React.FC = () => {
   const [destination, setDestination] = useState('');
@@ -60,13 +60,17 @@ const CreateTrip: React.FC = () => {
         // TODO: remove mock user id and pass proper user id
         userId: 'ea05325b-b9da-4113-8a63-0e875103a48c',
       };
-      await apiRequest<CreateTripRequest, unknown>(API_PATH.CREATE_TRIP, {
-        method: 'POST',
-        body: createTripReq,
-      });
+      const { data } = (await apiRequest<CreateTripRequest, { data: Trip }>(
+        API_PATH.CREATE_TRIP,
+        {
+          method: 'POST',
+          body: createTripReq,
+        }
+      )) as { data: Trip };
 
+      const { tripId } = data;
       resetForm();
-      navigate(`/${ROUTE_PATH.OVERVIEW}`);
+      navigate(`/${ROUTE_PATH.OVERVIEW}/${tripId}`);
     } catch (error) {
       console.error('Error creating trips:', error);
     }

@@ -3,8 +3,8 @@ import { Outlet, useLocation } from 'react-router';
 import { AppSidebar } from './AppSidebar';
 import AppNav from './AppNav';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { PATH_WITH_SIDEBAR } from '@/consts/PathWithSidebar';
 import ScrollToTop from '@/util/ScrollToTop';
+import { ROUTE_PATH } from '@/consts/RoutePath';
 
 const AppLayout: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
@@ -19,7 +19,7 @@ const AppLayout: React.FC = () => {
       <div className='flex flex-1'>
         <ScrollToTop />
         <SidebarProvider>
-          {PATH_WITH_SIDEBAR.includes(location.pathname) && (
+          {location.pathname.startsWith(`/${ROUTE_PATH.PLAN_TRIP}`) && (
             <>
               <div
                 className={`
