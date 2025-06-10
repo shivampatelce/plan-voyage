@@ -66,7 +66,7 @@ const CreateTrip: React.FC = () => {
       });
 
       resetForm();
-      navigate(`/${ROUTE_PATH.SETTING}`);
+      navigate(`/${ROUTE_PATH.OVERVIEW}`);
     } catch (error) {
       console.error('Error fetching trips:', error);
     }

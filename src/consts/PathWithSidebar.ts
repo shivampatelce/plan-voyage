@@ -2,7 +2,7 @@ import { ROUTE_PATH } from './RoutePath';
 
 export const PATH_WITH_SIDEBAR: string[] = [
   `/${ROUTE_PATH.PLAN_TRIP}`,
-  `/${ROUTE_PATH.SETTING}`,
+  `/${ROUTE_PATH.OVERVIEW}`,
   `/${ROUTE_PATH.INVITE}`,
   `/${ROUTE_PATH.ITINERARY}`,
   `/${ROUTE_PATH.PACKAGING_LIST}`,

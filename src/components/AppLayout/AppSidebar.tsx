@@ -5,10 +5,10 @@ import {
   ChevronRight,
   DollarSign,
   Files,
+  Info,
   ListCheck,
   MessageSquare,
   PersonStanding,
-  Settings,
 } from 'lucide-react';
 
 import {
@@ -27,9 +27,9 @@ import { NavLink } from 'react-router';
 
 const items = [
   {
-    title: 'Setting',
-    url: ROUTE_PATH.SETTING,
-    icon: Settings,
+    title: 'Overview',
+    url: ROUTE_PATH.OVERVIEW,
+    icon: Info,
   },
   {
     title: 'Invite',

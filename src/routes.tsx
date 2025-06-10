@@ -5,8 +5,8 @@ import { ROUTE_PATH } from './consts/RoutePath';
 import TripList from './pages/TripList';
 import CreateTrip from './pages/CreateTrip';
 import PlanTrip from './pages/PlanTrip';
-import PlanSettings from './components/PlanSettings/PlanSettings';
 import RouteProtection from './util/RouteProtection';
+import PlanOverview from './components/PlanTrip/PlanOverview';
 
 const router = createBrowserRouter([
   {
@@ -44,7 +44,7 @@ const router = createBrowserRouter([
           </>
         ),
         children: [
-          { path: `/${ROUTE_PATH.SETTING}`, element: <PlanSettings /> },
+          { path: `/${ROUTE_PATH.OVERVIEW}`, element: <PlanOverview /> },
         ],
       },
     ],

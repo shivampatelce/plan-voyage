@@ -3,7 +3,7 @@ export const ROUTE_PATH = {
   TRIPS: 'trips',
   PLAN_TRIP: 'plan-trip',
   CREATE_TRIP: 'create-trip',
-  SETTING: `plan-trip/setting`,
+  OVERVIEW: `plan-trip/overview`,
   INVITE: 'plan-trip/invite',
   ITINERARY: 'plan-trip/itinerary',
   PACKAGING_LIST: 'plan-trip/packaging-list',
