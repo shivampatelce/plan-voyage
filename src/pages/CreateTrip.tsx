@@ -15,6 +15,7 @@ import { ROUTE_PATH } from '@/consts/RoutePath';
 import { apiRequest } from '@/util/apiRequest';
 import { API_PATH } from '@/consts/ApiPath';
 import type { CreateTripRequest, Trip } from '@/types/Trip';
+import keycloak from '@/keycloak-config';
 
 const CreateTrip: React.FC = () => {
   const [destination, setDestination] = useState('');
@@ -57,8 +58,7 @@ const CreateTrip: React.FC = () => {
         destination,
         startDate,
         endDate,
-        // TODO: remove mock user id and pass proper user id
-        userId: 'ea05325b-b9da-4113-8a63-0e875103a48c',
+        userId: keycloak.subject || '',
       };
       const { data } = (await apiRequest<CreateTripRequest, { data: Trip }>(
         API_PATH.CREATE_TRIP,

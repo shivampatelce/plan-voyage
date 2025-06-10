@@ -5,6 +5,7 @@ import { apiRequest } from '@/util/apiRequest';
 import { API_PATH } from '@/consts/ApiPath';
 import EmptyTripScreen from '@/components/TripList/EmptyTripScreen';
 import SkeletonCard from '@/components/ui/custom/SkeletonCard';
+import keycloak from '@/keycloak-config';
 
 const TripList: React.FC = () => {
   const [currentTrips, setCurrentTrips] = useState<Trip[]>([]);
@@ -23,8 +24,7 @@ const TripList: React.FC = () => {
         {
           method: 'POST',
           body: {
-            // TODO: remove mock user id and pass proper user id
-            userId: 'ea05325b-b9da-4113-8a63-0e875103a48c',
+            userId: keycloak.subject || '',
           },
         }
       )) as { data: Trip[] };
