@@ -11,13 +11,17 @@ import { Calendar, MapPin, MoreVertical, Settings, Trash2 } from 'lucide-react';
 import type { Trip } from '@/types/Trip';
 import { useNavigate } from 'react-router';
 import { ROUTE_PATH } from '@/consts/RoutePath';
+import { apiRequest } from '@/util/apiRequest';
+import { API_PATH } from '@/consts/ApiPath';
 
 const TripCard = ({
   trip,
   isPreviousTrip,
+  tripDeleted,
 }: {
   trip: Trip;
   isPreviousTrip?: boolean;
+  tripDeleted: () => void;
 }) => {
   const navigate = useNavigate();
   const formatDateRange = (start: Date | string, end: Date | string) => {
@@ -35,6 +39,20 @@ const TripCard = ({
     });
 
     return `${startFormatted} - ${endFormatted}`;
+  };
+
+  const removeTrip = async () => {
+    try {
+      await apiRequest<unknown, unknown>(
+        API_PATH.DELETE_TRIP + '/' + trip.tripId,
+        {
+          method: 'DELETE',
+        }
+      );
+      tripDeleted();
+    } catch (error) {
+      console.error('Error deleting trip:', error);
+    }
   };
 
   return (
@@ -71,7 +89,10 @@ const TripCard = ({
                 <Settings className='mr-2 h-4 w-4' />
                 Plan Your Trip
               </DropdownMenuItem>
-              <DropdownMenuItem className='cursor-pointer text-red-600 focus:text-red-600'>
+
+              <DropdownMenuItem
+                className='cursor-pointer text-red-600 focus:text-red-600'
+                onClick={removeTrip}>
                 <Trash2 className='mr-2 h-4 w-4' />
                 Delete Trip
               </DropdownMenuItem>

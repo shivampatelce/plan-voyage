@@ -12,11 +12,11 @@ const TripList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
     fetchTrips();
   }, []);
 
   const fetchTrips = async () => {
+    setIsLoading(true);
     try {
       const { data } = (await apiRequest<{ userId: string }, { data: Trip[] }>(
         API_PATH.TRIPS_LIST,
@@ -86,6 +86,9 @@ const TripList: React.FC = () => {
               <TripCard
                 key={trip.tripId}
                 trip={trip}
+                tripDeleted={() => {
+                  fetchTrips();
+                }}
               />
             ))}
           </div>
@@ -103,6 +106,9 @@ const TripList: React.FC = () => {
                 key={trip.tripId}
                 trip={trip}
                 isPreviousTrip={true}
+                tripDeleted={() => {
+                  fetchTrips();
+                }}
               />
             ))}
           </div>
