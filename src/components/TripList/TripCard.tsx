@@ -41,7 +41,7 @@ const TripCard = ({
     <Card className='overflow-hidden hover:shadow-lg transition-shadow cursor-pointer'>
       <div className='relative'>
         <img
-          src={trip.image}
+          src={trip.destinationImageUrl}
           alt={trip.title}
           className='w-full h-48 object-cover'
         />
@@ -63,7 +63,11 @@ const TripCard = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='start'>
-              <DropdownMenuItem className='cursor-pointer'>
+              <DropdownMenuItem
+                className='cursor-pointer'
+                onClick={() => {
+                  navigate(`/${ROUTE_PATH.SETTING}`);
+                }}>
                 <Settings className='mr-2 h-4 w-4' />
                 Plan Your Trip
               </DropdownMenuItem>

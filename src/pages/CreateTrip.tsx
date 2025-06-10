@@ -12,6 +12,9 @@ import {
 import { CalendarIcon } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { ROUTE_PATH } from '@/consts/RoutePath';
+import { apiRequest } from '@/util/apiRequest';
+import { API_PATH } from '@/consts/ApiPath';
+import type { CreateTripRequest } from '@/types/Trip';
 
 const CreateTrip: React.FC = () => {
   const [destination, setDestination] = useState('');
@@ -48,18 +51,33 @@ const CreateTrip: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const createNewTrip = async () => {
+    try {
+      const createTripReq: CreateTripRequest = {
+        destination,
+        startDate,
+        endDate,
+        // TODO: remove mock user id and pass proper user id
+        userId: 'ea05325b-b9da-4113-8a63-0e875103a48c',
+      };
+      await apiRequest<CreateTripRequest, unknown>(API_PATH.CREATE_TRIP, {
+        method: 'POST',
+        body: createTripReq,
+      });
+
+      resetForm();
+      navigate(`/${ROUTE_PATH.SETTING}`);
+    } catch (error) {
+      console.error('Error fetching trips:', error);
+    }
+  };
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
-    console.log({
-      destination,
-      startDate,
-      endDate,
-    });
-
-    resetForm();
+    createNewTrip();
   };
 
   const resetForm = () => {
