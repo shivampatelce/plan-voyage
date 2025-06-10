@@ -1,8 +1,8 @@
 export interface Trip {
   tripId: number;
   destination: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   destinationImageUrl: string;
   status: string;
 }
