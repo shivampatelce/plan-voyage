@@ -1,13 +1,48 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import { apiRequest } from '@/util/apiRequest';
+import type { Trip } from '@/types/Trip';
+import { API_PATH } from '@/consts/ApiPath';
+import { useParams } from 'react-router';
+import CustomSkeleton from '../ui/custom/CustomSkeleton';
 
 const PlanOverview: React.FC = () => {
+  const [trip, setTrip] = useState<Trip>();
+  const [isLoading, setIsLoading] = useState(false);
+  const { tripId } = useParams<{ tripId: string }>();
+
+  useEffect(() => {
+    fetchTripOverview();
+  }, []);
+
+  const fetchTripOverview = async () => {
+    setIsLoading(true);
+    try {
+      const { data } = (await apiRequest<{ userId: string }, { data: Trip }>(
+        API_PATH.TRIP_OVERVIEW + `/${tripId}`,
+        {
+          method: 'GET',
+        }
+      )) as { data: Trip };
+
+      setTrip(data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error while fetching trip overview:', error);
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return <CustomSkeleton />;
+  }
+
   return (
     <div className='relative w-full'>
       <div className='relative w-full h-96 overflow-hidden rounded-lg'>
         <img
-          src='https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80'
-          alt='India landscape with taj mahal'
+          src={trip?.destinationImageUrl}
+          alt={trip?.destination}
           className='w-full h-full object-cover'
         />
         <div className='absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent' />
@@ -17,7 +52,7 @@ const PlanOverview: React.FC = () => {
         <Card className='bg-white/95 backdrop-blur-sm shadow-2xl border-0'>
           <CardContent className='p-8 text-center'>
             <h1 className='text-4xl md:text-5xl font-bold text-gray-900 mb-2'>
-              Plan To India
+              Plan To {trip?.destination}
             </h1>
             <p className='text-gray-600 text-lg'>
               Discover the incredible journey that awaits you

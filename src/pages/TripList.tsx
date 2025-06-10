@@ -4,7 +4,7 @@ import TripCard from '@/components/TripList/TripCard';
 import { apiRequest } from '@/util/apiRequest';
 import { API_PATH } from '@/consts/ApiPath';
 import EmptyTripScreen from '@/components/TripList/EmptyTripScreen';
-import SkeletonCard from '@/components/ui/SkeletonCard';
+import SkeletonCard from '@/components/ui/custom/SkeletonCard';
 
 const TripList: React.FC = () => {
   const [currentTrips, setCurrentTrips] = useState<Trip[]>([]);
