@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ModeToggle } from '@/components/mode-toggle';
 import {
   NavigationMenu,
@@ -13,10 +13,39 @@ import { Button } from '@/components/ui/button';
 import { NavLink, useNavigate } from 'react-router';
 import { ROUTE_PATH } from '@/consts/RoutePath';
 import keycloak from '@/keycloak-config';
+import { Badge } from '../ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { apiRequest } from '@/util/apiRequest';
+import { API_PATH } from '@/consts/ApiPath';
+import type { Invitations } from '@/types/Invitations';
 
 export default function AppNav() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [invitations, setInvitations] = useState<Invitations[]>([]);
   const navigate = useNavigate();
+
+  const fetchInvitations = async () => {
+    const email = keycloak.tokenParsed?.email;
+    if (email) {
+      const { data } = (await apiRequest<unknown, { data: Invitations[] }>(
+        `${API_PATH.INVITATION_LIST}`,
+        {
+          method: 'POST',
+          body: {
+            email,
+          },
+        }
+      )) as { data: Invitations[] };
+
+      setInvitations(data);
+    }
+  };
+
+  useEffect(() => {
+    if (keycloak.authenticated) {
+      fetchInvitations();
+    }
+  }, []);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -41,7 +70,6 @@ export default function AppNav() {
       <div className='font-medium'>
         <h1 className='text-lg md:text-xl'>Plan Voyage</h1>
       </div>
-
       <div className='hidden md:flex items-center gap-4'>
         <NavigationMenu viewport={false}>
           <NavigationMenuList>
@@ -83,6 +111,30 @@ export default function AppNav() {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
+            {!!invitations.length && (
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <NavLink
+                    to={`/${ROUTE_PATH.INVITATIONS}`}
+                    className='px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors'>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <div className='font-medium flex items-center gap-2'>
+                          Invitations
+                          <Badge className='h-5 min-w-5 rounded-full px-1 font-mono tabular-nums'>
+                            1
+                          </Badge>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        You have {invitations.length} invitation
+                        {invitations.length !== 1 && 's'} for trip planning
+                      </TooltipContent>
+                    </Tooltip>
+                  </NavLink>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            )}
             {!keycloak.authenticated ? (
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
@@ -104,7 +156,6 @@ export default function AppNav() {
         </NavigationMenu>
         <ModeToggle />
       </div>
-
       {/* Mobile Menu Button and Mode Toggle */}
       <div className='md:hidden flex items-center gap-2'>
         <ModeToggle />
@@ -119,7 +170,6 @@ export default function AppNav() {
           )}
         </button>
       </div>
-
       {isMobileMenuOpen && (
         <div className='absolute top-full left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 shadow-lg md:hidden z-50'>
           <div className='px-4 py-2 space-y-1'>

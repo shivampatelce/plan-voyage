@@ -21,6 +21,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import type { PendingInvite } from './Invite';
+import { ROUTE_PATH } from '@/consts/RoutePath';
 
 interface PendingInviteTableProps {
   invites: PendingInvite[];
@@ -32,10 +33,13 @@ const PendingInviteTable: React.FC<PendingInviteTableProps> = ({
   onDeleteInvitation,
 }) => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const API_BASE_URL = import.meta.env.VITE_APP_BASE_URL;
 
-  const handleCopyLink = async (inviteLink: string, id: string) => {
+  const handleCopyLink = async (id: string) => {
     try {
-      await navigator.clipboard.writeText(inviteLink);
+      await navigator.clipboard.writeText(
+        `${API_BASE_URL}${ROUTE_PATH.INVITATIONS}`
+      );
       setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);
     } catch (err) {
@@ -83,9 +87,7 @@ const PendingInviteTable: React.FC<PendingInviteTableProps> = ({
                     <Button
                       variant='outline'
                       size='sm'
-                      onClick={() =>
-                        handleCopyLink(invite.inviteLink, invite.invitationId)
-                      }
+                      onClick={() => handleCopyLink(invite.invitationId)}
                       className='flex items-center gap-2'>
                       {copiedId === invite.invitationId ? (
                         <>
@@ -141,6 +143,12 @@ const PendingInviteTable: React.FC<PendingInviteTableProps> = ({
       <div className='text-sm text-gray-500'>
         {invites.length} pending invite
         {invites.length !== 1 ? 's' : ''}
+      </div>
+
+      <div className='text-center'>
+        <p className='text-xs text-gray-500'>
+          An email has been sent to the users, but you can also share the link.
+        </p>
       </div>
     </div>
   );

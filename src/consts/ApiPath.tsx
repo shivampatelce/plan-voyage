@@ -6,4 +6,5 @@ export const API_PATH = {
   INVITE_USER: '/trip/invite-user',
   PENDING_INVITATION_LIST: '/trip/pending-invite',
   DELETE_INVITATION: '/trip/delete-invitation',
+  INVITATION_LIST: '/trip/invitations',
 };

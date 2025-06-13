@@ -27,6 +27,13 @@ const Home: React.FC = () => {
     keycloak.login();
   };
 
+  const navigateToYourTrips = () => {
+    if (keycloak.authenticated) {
+      return navigate(ROUTE_PATH.TRIPS);
+    }
+    keycloak.login();
+  };
+
   const features = [
     {
       icon: Calendar,
@@ -166,7 +173,7 @@ const Home: React.FC = () => {
               <span>Create New Trip</span>
               <ArrowRight className='h-5 w-5' />
             </Button>
-            <Button onClick={navigateToCreateTrip}>
+            <Button onClick={navigateToYourTrips}>
               Your Trips
               <Plane className='h-5 w-5' />
             </Button>
