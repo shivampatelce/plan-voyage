@@ -3,4 +3,7 @@ export const API_PATH = {
   CREATE_TRIP: '/trip/create-trip',
   DELETE_TRIP: '/trip',
   TRIP_OVERVIEW: '/trip',
+  INVITE_USER: '/trip/invite-user',
+  PENDING_INVITATION_LIST: '/trip/pending-invite',
+  DELETE_INVITATION: '/trip/delete-invitation',
 };

@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '../ui/button';
 import { ROUTE_PATH } from '@/consts/RoutePath';
-import { NavLink } from 'react-router';
+import { NavLink, useParams } from 'react-router';
 
 const items = [
   {
@@ -75,6 +75,8 @@ export function AppSidebar({
   isSidebarCollapsed: boolean;
   onSidebarCollapse: () => void;
 }) {
+  const { tripId } = useParams<{ tripId: string }>();
+
   return (
     <Sidebar
       className={`h-full ${isSidebarCollapsed ? 'w-12' : 'w-50'}`}
@@ -100,7 +102,7 @@ export function AppSidebar({
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink to={item.url}>
+                    <NavLink to={`${item.url}/${tripId}`}>
                       <item.icon />
                       <span>{item.title}</span>
                     </NavLink>
