@@ -4,6 +4,7 @@ export const ROUTE_PATH = {
   PLAN_TRIP: 'plan-trip',
   CREATE_TRIP: 'create-trip',
   INVITATIONS: 'invitations',
+  TRIP_INVITATION: 'invitation',
   OVERVIEW: `plan-trip/overview`,
   INVITE: 'plan-trip/invite',
   ITINERARY: 'plan-trip/itinerary',

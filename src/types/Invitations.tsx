@@ -1,8 +1,6 @@
+import type { Trip } from './Trip';
+
 export interface Invitations {
-  tripId: string;
-  destination: string;
-  startDate: Date;
-  endDate: Date;
-  userId: string;
-  destinationImageUrl: string;
+  invitationId: string;
+  trip: Trip;
 }

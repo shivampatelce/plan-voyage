@@ -9,6 +9,7 @@ import RouteProtection from './util/RouteProtection';
 import PlanOverview from './components/PlanTrip/PlanOverview';
 import Invite from './components/Invite/Invite';
 import InvitationList from './pages/InvitationList';
+import TripInvitation from './pages/TripInvitation';
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,16 @@ const router = createBrowserRouter([
           <>
             <RouteProtection>
               <InvitationList />
+            </RouteProtection>
+          </>
+        ),
+      },
+      {
+        path: `/${ROUTE_PATH.TRIP_INVITATION}/:invitationId`,
+        element: (
+          <>
+            <RouteProtection>
+              <TripInvitation />
             </RouteProtection>
           </>
         ),

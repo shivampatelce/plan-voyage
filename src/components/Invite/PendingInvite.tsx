@@ -38,7 +38,7 @@ const PendingInviteTable: React.FC<PendingInviteTableProps> = ({
   const handleCopyLink = async (id: string) => {
     try {
       await navigator.clipboard.writeText(
-        `${API_BASE_URL}${ROUTE_PATH.INVITATIONS}`
+        `${API_BASE_URL}${ROUTE_PATH.TRIP_INVITATION}/${id}`
       );
       setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);

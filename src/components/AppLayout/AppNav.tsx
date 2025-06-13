@@ -122,7 +122,7 @@ export default function AppNav() {
                         <div className='font-medium flex items-center gap-2'>
                           Invitations
                           <Badge className='h-5 min-w-5 rounded-full px-1 font-mono tabular-nums'>
-                            1
+                            {invitations.length}
                           </Badge>
                         </div>
                       </TooltipTrigger>

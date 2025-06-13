@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { API_PATH } from '@/consts/ApiPath';
+import { ROUTE_PATH } from '@/consts/RoutePath';
 import keycloak from '@/keycloak-config';
 import type { Invitations } from '@/types/Invitations';
 import { apiRequest } from '@/util/apiRequest';
@@ -8,9 +9,11 @@ import formatDateRange from '@/util/formateDate';
 import { MapPin, Calendar } from 'lucide-react';
 import React from 'react';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 const InvitationList: React.FC = () => {
   const [invitations, setInvitations] = useState<Invitations[]>([]);
+  const navigate = useNavigate();
 
   const fetchInvitations = async () => {
     const email = keycloak.tokenParsed?.email;
@@ -37,9 +40,9 @@ const InvitationList: React.FC = () => {
       <div className='text-center space-y-2'>
         <h2 className='text-3xl font-bold text-gray-900'>Pending Invites</h2>
       </div>
-      {invitations.map((trip) => (
+      {invitations.map(({ invitationId, trip }) => (
         <Card
-          key={trip.tripId}
+          key={invitationId}
           className='overflow-hidden max-w-4xl mx-auto hover:shadow-lg transition-shadow cursor-pointer'>
           <img
             src={trip.destinationImageUrl}
@@ -61,8 +64,15 @@ const InvitationList: React.FC = () => {
                 {formatDateRange(trip.startDate, trip.endDate)}
               </span>
             </div>
-            <Button className='mt-4 mr-4'>Accept</Button>
-            <Button className='mt-4 bg-red-600'>Reject</Button>
+            <Button
+              className='mt-4 mr-4'
+              onClick={() => {
+                navigate(`/${ROUTE_PATH.TRIP_INVITATION}/${invitationId}`);
+              }}>
+              More Details
+            </Button>
+            <Button className='mt-4 mr-4'>Join</Button>
+            <Button className='mt-4 bg-red-600 hover:bg-red-500'>Reject</Button>
           </CardContent>
         </Card>
       ))}
