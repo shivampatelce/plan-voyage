@@ -13,4 +13,5 @@ export const ROUTE_PATH = {
   BUDGET: 'plan-trip/budget',
   CHAT: 'plan-trip/chat',
   DOCUMENTS: 'plan-trip/documents',
+  SETTINGS: 'plan-trip/settings',
 };

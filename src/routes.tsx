@@ -10,6 +10,7 @@ import PlanOverview from './components/PlanTrip/PlanOverview';
 import Invite from './components/Invite/Invite';
 import InvitationList from './pages/InvitationList';
 import TripInvitation from './pages/TripInvitation';
+import TripSettings from './components/TripSettings/TripSettings';
 
 const router = createBrowserRouter([
   {
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
           {
             path: `/${ROUTE_PATH.INVITE}/:tripId`,
             element: <Invite />,
+          },
+          {
+            path: `/${ROUTE_PATH.SETTINGS}/:tripId`,
+            element: <TripSettings />,
           },
         ],
       },

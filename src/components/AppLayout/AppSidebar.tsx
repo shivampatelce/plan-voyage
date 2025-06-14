@@ -9,6 +9,7 @@ import {
   ListCheck,
   MessageSquare,
   PersonStanding,
+  Settings,
 } from 'lucide-react';
 
 import {
@@ -65,6 +66,11 @@ const items = [
     title: 'Documents',
     url: ROUTE_PATH.DOCUMENTS,
     icon: Files,
+  },
+  {
+    title: 'Settings',
+    url: ROUTE_PATH.SETTINGS,
+    icon: Settings,
   },
 ];
 
