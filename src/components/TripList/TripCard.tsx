@@ -104,12 +104,14 @@ const TripCard = ({
                   Plan Your Trip
                 </DropdownMenuItem>
 
-                <DropdownMenuItem
-                  className='cursor-pointer text-red-600 focus:text-red-600'
-                  onClick={() => setIsRemoveConfirmationDialogOpen(true)}>
-                  <Trash2 className='mr-2 h-4 w-4' />
-                  Delete Trip
-                </DropdownMenuItem>
+                {trip.tripUsers.length == 1 && (
+                  <DropdownMenuItem
+                    className='cursor-pointer text-red-600 focus:text-red-600'
+                    onClick={() => setIsRemoveConfirmationDialogOpen(true)}>
+                    <Trash2 className='mr-2 h-4 w-4' />
+                    Delete Trip
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
