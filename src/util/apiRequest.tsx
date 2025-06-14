@@ -8,6 +8,14 @@ export interface RequestOptions<T = unknown> {
   body?: T;
 }
 
+export interface ErrorResponse {
+  errorCode: number;
+  message: string;
+  path: string;
+  statusCode: number;
+  timeStamp: Date;
+}
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function apiRequest<
@@ -33,13 +41,17 @@ export async function apiRequest<
 
   if (response.status === 401) {
     keycloak.login();
+    return Promise.reject({
+      message: 'Unauthorized. Redirecting to login.',
+      statusCode: 401,
+    });
   }
 
   if (!response.ok) {
-    const errorData = await response.json().catch((error) => {
+    const errorData: ErrorResponse = await response.json().catch((error) => {
       console.error(error);
     });
-    throw new Error(errorData.message || 'API request failed');
+    throw errorData;
   }
 
   return (await response.json()) as TResponse;

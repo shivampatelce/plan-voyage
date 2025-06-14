@@ -8,4 +8,5 @@ export const API_PATH = {
   DELETE_INVITATION: '/trip/delete-invitation',
   INVITATION_LIST: '/trip/invitations',
   INVITATION: '/trip/invitation',
+  JOIN_TRIP: '/trip/join-trip',
 };

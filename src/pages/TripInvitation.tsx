@@ -1,16 +1,24 @@
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { API_PATH } from '@/consts/ApiPath';
+import { ROUTE_PATH } from '@/consts/RoutePath';
 import keycloak from '@/keycloak-config';
+import type { JoinTrip } from '@/types/JoinTrip';
 import type { Trip } from '@/types/Trip';
-import { apiRequest } from '@/util/apiRequest';
+import { apiRequest, type ErrorResponse } from '@/util/apiRequest';
+import formatDateRange from '@/util/formateDate';
+import { AlertTriangle, Calendar } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 const TripInvitation: React.FC = () => {
   const { invitationId } = useParams<{ invitationId: string }>();
   const [trip, setTrip] = useState<Trip>();
+  const [invalidInvitation, setInvalidInvitation] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const fetchInvitation = async (invitationId: string) => {
     const email = keycloak.tokenParsed?.email;
@@ -29,6 +37,9 @@ const TripInvitation: React.FC = () => {
       setTrip(data);
     } catch (error) {
       console.error(`Error while fetching invitation:`, error);
+      const errorResponse = error as ErrorResponse;
+      setInvalidInvitation(true);
+      setErrorMessage(errorResponse.message);
     }
   };
 
@@ -37,6 +48,44 @@ const TripInvitation: React.FC = () => {
       fetchInvitation(invitationId);
     }
   }, [invitationId]);
+
+  if (invalidInvitation) {
+    return (
+      <div className='h-80 flex items-center justify-center p-6'>
+        <div className='w-full max-w-md'>
+          <Alert
+            variant='destructive'
+            className='border-dashed'>
+            <div className='w-100 flex justify-center'>
+              <AlertTriangle className='h-[40px] w-[40px]' />
+            </div>
+            <br />
+            <AlertDescription className='text-4xl text-center font-medium'>
+              {errorMessage}
+            </AlertDescription>
+          </Alert>
+        </div>
+      </div>
+    );
+  }
+
+  const handleTripJoin = async () => {
+    if (!invitationId || !trip) return;
+    try {
+      await apiRequest<JoinTrip, void>(API_PATH.JOIN_TRIP, {
+        method: 'POST',
+        body: {
+          tripId: trip.tripId,
+          invitationId,
+          userId: keycloak.subject || '',
+        },
+      });
+
+      navigate(`/${ROUTE_PATH.OVERVIEW}/${trip.tripId}`);
+    } catch (error) {
+      console.error(`Error join trip req:`, error);
+    }
+  };
 
   return (
     <>
@@ -64,16 +113,29 @@ const TripInvitation: React.FC = () => {
         <div className='h-20' />
       </div>
 
+      <div className='flex items-center justify-center text-gray-600 mt-20'>
+        <Calendar className='w-4 h-4 mr-1' />
+        <span className='text-xl'>
+          {!!trip?.startDate &&
+            !!trip.endDate &&
+            formatDateRange(trip.startDate, trip.endDate)}
+        </span>
+      </div>
+
       {/* TODO: Make this name dynamic */}
-      <div className='mt-20 flex items-center justify-center'>
-        <p className='text-lg text-gray-500'>
+      <div className='mt-10 flex items-center justify-center'>
+        <p className='text-xl text-gray-600'>
           You’ve been invited by {'Shivam Patel'} to help plan a trip to{' '}
           {trip?.destination}
         </p>
       </div>
 
       <div className='mt-6 flex items-center justify-center'>
-        <Button className='mt-4 mr-4'>Join</Button>
+        <Button
+          className='mt-4 mr-4'
+          onClick={handleTripJoin}>
+          Join
+        </Button>
         <Button className='mt-4 bg-red-600 hover:bg-red-500'>Reject</Button>
       </div>
     </>
