@@ -7,7 +7,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Calendar, MapPin, MoreVertical, Settings, Trash2 } from 'lucide-react';
+import {
+  Calendar,
+  LogOut,
+  MapPin,
+  MoreVertical,
+  Settings,
+  Trash2,
+} from 'lucide-react';
 import type { Trip } from '@/types/Trip';
 import { useNavigate } from 'react-router';
 import { ROUTE_PATH } from '@/consts/RoutePath';
@@ -15,15 +22,18 @@ import { apiRequest } from '@/util/apiRequest';
 import { API_PATH } from '@/consts/ApiPath';
 import { useState } from 'react';
 import RemoveTripConfirmationDialog from './RemoveTripConfirmationDialog';
+import keycloak from '@/keycloak-config';
 
 const TripCard = ({
   trip,
   isPreviousTrip,
   tripDeleted,
+  handleExitTrip,
 }: {
   trip: Trip;
   isPreviousTrip?: boolean;
   tripDeleted: () => void;
+  handleExitTrip: () => void;
 }) => {
   const [isRemoveConfirmationDialogOpen, setIsRemoveConfirmationDialogOpen] =
     useState(false);
@@ -56,6 +66,21 @@ const TripCard = ({
       tripDeleted();
     } catch (error) {
       console.error('Error deleting trip:', error);
+    }
+  };
+
+  const exitTrip = async () => {
+    try {
+      await apiRequest<unknown, unknown>(API_PATH.EXIT_TRIP, {
+        method: 'DELETE',
+        body: {
+          tripId: trip.tripId,
+          userId: keycloak.subject,
+        },
+      });
+      handleExitTrip();
+    } catch (error) {
+      console.error('Error exit trip:', error);
     }
   };
 
@@ -103,6 +128,15 @@ const TripCard = ({
                   <Settings className='mr-2 h-4 w-4' />
                   Plan Your Trip
                 </DropdownMenuItem>
+
+                {trip.tripUsers.length != 1 && (
+                  <DropdownMenuItem
+                    className='cursor-pointer text-red-600 focus:text-red-600'
+                    onClick={exitTrip}>
+                    <LogOut className='mr-2 h-4 w-4' />
+                    Exit From Trip
+                  </DropdownMenuItem>
+                )}
 
                 {trip.tripUsers.length == 1 && (
                   <DropdownMenuItem

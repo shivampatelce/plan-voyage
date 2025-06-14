@@ -2,6 +2,7 @@ export const API_PATH = {
   TRIPS_LIST: '/trip/trip-list',
   CREATE_TRIP: '/trip/create-trip',
   DELETE_TRIP: '/trip',
+  EXIT_TRIP: '/trip/exit-trip',
   TRIP_OVERVIEW: '/trip',
   INVITE_USER: '/trip/invite-user',
   PENDING_INVITATION_LIST: '/trip/pending-invite',

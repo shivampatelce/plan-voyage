@@ -58,10 +58,8 @@ const TripList: React.FC = () => {
           <SkeletonCard />
           <SkeletonCard />
           <SkeletonCard />
-          <SkeletonCard />
         </div>
         <div className='flex justify-between space-y-6'>
-          <SkeletonCard />
           <SkeletonCard />
           <SkeletonCard />
           <SkeletonCard />
@@ -89,6 +87,9 @@ const TripList: React.FC = () => {
                 tripDeleted={() => {
                   fetchTrips();
                 }}
+                handleExitTrip={() => {
+                  fetchTrips();
+                }}
               />
             ))}
           </div>
@@ -107,6 +108,9 @@ const TripList: React.FC = () => {
                 trip={trip}
                 isPreviousTrip={true}
                 tripDeleted={() => {
+                  fetchTrips();
+                }}
+                handleExitTrip={() => {
                   fetchTrips();
                 }}
               />
