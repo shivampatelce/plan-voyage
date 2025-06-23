@@ -6,9 +6,13 @@ export interface Trip {
   destinationImageUrl: string;
   status: string;
   creatorId: string;
-  tripUsers: {
-    userId: string;
-  }[];
+  tripUsers: TripUsers[];
+}
+
+export interface TripUsers {
+id: string;
+  firstName: string;
+  lastName: string;
 }
 
 export interface CreateTripRequest {

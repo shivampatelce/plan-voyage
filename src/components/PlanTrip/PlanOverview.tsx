@@ -5,6 +5,7 @@ import type { Trip } from '@/types/Trip';
 import { API_PATH } from '@/consts/ApiPath';
 import { useParams } from 'react-router';
 import CustomSkeleton from '../ui/custom/CustomSkeleton';
+import UsersList from '../UsersList/UsersList';
 
 const PlanOverview: React.FC = () => {
   const [trip, setTrip] = useState<Trip>();
@@ -63,6 +64,10 @@ const PlanOverview: React.FC = () => {
         </div>
 
         <div className='h-20' />
+      </div>
+
+      <div className='mt-30 p-4 flex items-center justify-center'>
+        <UsersList users={trip?.tripUsers || []}/>
       </div>
     </>
   );
