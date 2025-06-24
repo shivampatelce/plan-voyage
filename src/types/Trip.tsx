@@ -10,9 +10,11 @@ export interface Trip {
 }
 
 export interface TripUsers {
-id: string;
+  id: string;
   firstName: string;
   lastName: string;
+  // To represent different color for differenet users
+  color?: string;
 }
 
 export interface CreateTripRequest {

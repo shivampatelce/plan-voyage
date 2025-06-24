@@ -11,6 +11,7 @@ import Invite from './components/Invite/Invite';
 import InvitationList from './pages/InvitationList';
 import TripInvitation from './pages/TripInvitation';
 import TripSettings from './components/TripSettings/TripSettings';
+import ToDOList from './components/ToDoList/ToDoList';
 
 const router = createBrowserRouter([
   {
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
           {
             path: `/${ROUTE_PATH.SETTINGS}/:tripId`,
             element: <TripSettings />,
+          },
+          {
+            path: `/${ROUTE_PATH.TO_DO_LIST}/:tripId`,
+            element: <ToDOList />,
           },
         ],
       },

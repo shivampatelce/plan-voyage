@@ -65,24 +65,31 @@ const UsersList: React.FC<{ users: TripUsers[] }> = ({ users }) => {
         )}
         <div className="p-6">
           <div className="flex justify-center">
-            {users.map((user, index) => (
-              <div
-                key={user.id}
-                className="m-2 group relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 border border-gray-200 hover:shadow-md hover:border-black-300 transition-all duration-200 hover:-translate-y-1">
-                <div className="flex items-center space-x-1">
-                  <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                    {user.firstName[0]}
-                    {user.lastName[0]}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">
-                      {user.firstName} {user.lastName}
-                    </p>
-                    <p className="text-xs text-gray-500">Member #{index + 1}</p>
+            {users.map((user, index) => {
+              return (
+                <div
+                  key={index}
+                  className={`m-2 group relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 border border-gray-200 hover:shadow-md hover:border-black-300 transition-all duration-200 hover:-translate-y-1`}>
+                  <div className="flex items-center space-x-1">
+                    <div
+                      className={`w-10 h-10 ${
+                        user?.color || 'bg-gray-700'
+                      } rounded-full flex items-center justify-center text-white font-semibold text-sm`}>
+                      {user.firstName[0]}
+                      {user.lastName[0]}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-900 truncate">
+                        {user.firstName} {user.lastName}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Member #{index + 1}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="mt-6 pt-6 border-t border-gray-200">
