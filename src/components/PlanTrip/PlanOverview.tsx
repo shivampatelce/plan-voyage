@@ -28,7 +28,9 @@ const PlanOverview: React.FC = () => {
           ...data,
           tripUsers: data.tripUsers.map((user, index) => ({
             ...user,
-            color: `bg-${appBadgeBackgroundColors[index % 10]}-500`,
+            color: `bg-${
+              appBadgeBackgroundColors[index % appBadgeBackgroundColors.length]
+            }-500`,
           })),
         };
 

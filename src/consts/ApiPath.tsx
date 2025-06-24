@@ -10,4 +10,8 @@ export const API_PATH = {
   INVITATION_LIST: '/trip/invitations',
   INVITATION: '/trip/invitation',
   JOIN_TRIP: '/trip/join-trip',
+
+  // To-Do List
+  ADD_TO_DO_TASK: '/to-do-list/add',
+  TO_DO_LIST: '/to-do-list',
 };

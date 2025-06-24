@@ -9,27 +9,25 @@ import { useParams } from 'react-router';
 import { API_PATH } from '@/consts/ApiPath';
 import { apiRequest } from '@/util/apiRequest';
 import { appBadgeBackgroundColors } from '@/util/appColors';
-
-interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-}
+import keycloak from '@/keycloak-config';
+import type { AddTaskReq, ToDoList } from '@/types/ToDoList';
 
 const ToDoList: React.FC = () => {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todos, setTodos] = useState<ToDoList[]>([]);
   const [inputValue, setInputValue] = useState('');
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
   const [trip, setTrip] = useState<Trip>();
   const [isLoading, setIsLoading] = useState(false);
   const { tripId } = useParams<{ tripId: string }>();
 
   useEffect(() => {
-    fetchTripDetails();
-  }, []);
+    if (tripId) {
+      fetchTripDetails(tripId);
+    }
+  }, [tripId]);
 
-  const fetchTripDetails = async () => {
+  const fetchTripDetails = async (tripId: string) => {
     setIsLoading(true);
     try {
       const { data } = (await apiRequest<{ userId: string }, { data: Trip }>(
@@ -41,13 +39,45 @@ const ToDoList: React.FC = () => {
 
       const trip: Trip = {
         ...data,
-        tripUsers: data.tripUsers.map((user, index) => ({
-          ...user,
-          color: `bg-${appBadgeBackgroundColors[index % 10]}-500`,
-        })),
+        tripUsers: data.tripUsers.map((user, index) => {
+          const color =
+            appBadgeBackgroundColors[index % appBadgeBackgroundColors.length];
+          return {
+            ...user,
+            color: color,
+            badgeBgColor: `bg-${color}-500`,
+          };
+        }),
       };
 
       setTrip(trip);
+      fetchToDoList(tripId, trip);
+    } catch (error) {
+      console.error('Error while fetching trip details:', error);
+      setIsLoading(false);
+    }
+  };
+
+  const fetchToDoList = async (tripId: string, trip: Trip) => {
+    setIsLoading(true);
+    try {
+      const { data } = (await apiRequest<unknown, unknown>(
+        API_PATH.TO_DO_LIST + `/${tripId}`,
+        {
+          method: 'GET',
+        }
+      )) as { data: ToDoList[] };
+
+      const toDoList: ToDoList[] = data.map((todo) => {
+        const user = trip.tripUsers.find((u) => u.userId === todo.createdBy);
+        return {
+          ...todo,
+          bgColor: `bg-${user?.color}-100`,
+          textColor: `text-${user?.color}-800`,
+        };
+      });
+
+      setTodos(toDoList);
       setIsLoading(false);
     } catch (error) {
       console.error('Error while fetching trip details:', error);
@@ -55,40 +85,52 @@ const ToDoList: React.FC = () => {
     }
   };
 
-  const addTodo = () => {
-    if (inputValue.trim() !== '') {
-      const newTodo: Todo = {
-        id: Date.now(),
-        text: inputValue.trim(),
-        completed: false,
-      };
-      setTodos([...todos, newTodo]);
+  const addTodo = async () => {
+    if (inputValue.trim() !== '' && tripId && keycloak.subject) {
+      try {
+        const task: AddTaskReq = {
+          taskTitle: inputValue.trim(),
+          tripId,
+          createdBy: keycloak.subject,
+        };
+
+        await apiRequest<AddTaskReq, unknown>(API_PATH.ADD_TO_DO_TASK, {
+          method: 'POST',
+          body: task,
+        });
+
+        if (trip) fetchToDoList(tripId, trip);
+      } catch (error) {
+        console.error('Error while fetching trip details:', error);
+        setIsLoading(false);
+      }
+
       setInputValue('');
     }
   };
 
-  const toggleComplete = (id: number) => {
+  const toggleComplete = (id: string) => {
     setTodos(
       todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        todo.taskId === id ? { ...todo, completed: !todo.markedDoneBy } : todo
       )
     );
   };
 
-  const deleteTodo = (id: number) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+  const deleteTodo = (id: string) => {
+    setTodos(todos.filter((todo) => todo.taskId !== id));
   };
 
-  const startEditing = (id: number, text: string) => {
+  const startEditing = (id: string, text: string) => {
     setEditingId(id);
     setEditValue(text);
   };
 
-  const saveEdit = (id: number) => {
+  const saveEdit = (id: string) => {
     if (editValue.trim() !== '') {
       setTodos(
         todos.map((todo) =>
-          todo.id === id ? { ...todo, text: editValue.trim() } : todo
+          todo.taskId === id ? { ...todo, text: editValue.trim() } : todo
         )
       );
     }
@@ -144,9 +186,9 @@ const ToDoList: React.FC = () => {
               ) : (
                 todos.map((todo) => (
                   <div
-                    key={todo.id}
+                    key={todo.taskId}
                     className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors">
-                    {editingId === todo.id ? (
+                    {editingId === todo.taskId ? (
                       // Edit mode
                       <>
                         <Input
@@ -154,14 +196,14 @@ const ToDoList: React.FC = () => {
                           value={editValue}
                           onChange={(e) => setEditValue(e.target.value)}
                           onKeyPress={(e) =>
-                            handleKeyPress(e, () => saveEdit(todo.id))
+                            handleKeyPress(e, () => saveEdit(todo.taskId))
                           }
                           className="flex-1"
                           autoFocus
                         />
                         <Button
                           size="sm"
-                          onClick={() => saveEdit(todo.id)}
+                          onClick={() => saveEdit(todo.taskId)}
                           disabled={!editValue.trim()}
                           className="h-8 w-8 p-0">
                           <Check className="w-4 h-4" />
@@ -178,50 +220,58 @@ const ToDoList: React.FC = () => {
                       // Display mode
                       <>
                         <Badge
-                          variant={todo.completed ? 'secondary' : 'default'}
+                          variant={todo.markedDoneBy ? 'secondary' : 'default'}
                           className={`flex-1 justify-start px-3 py-2 text-sm ${
-                            todo.completed
+                            todo.markedDoneBy
                               ? 'line-through text-gray-500 bg-gray-100'
-                              : 'bg-pink-100 text-pink-800'
+                              : `${todo.bgColor} ${todo.textColor}`
                           }`}>
-                          {todo.text}
+                          {todo.taskTitle}
                         </Badge>
 
                         <div className="flex gap-1">
                           <Button
                             size="sm"
-                            variant={todo.completed ? 'default' : 'outline'}
-                            onClick={() => toggleComplete(todo.id)}
+                            variant={todo.markedDoneBy ? 'default' : 'outline'}
+                            onClick={() => toggleComplete(todo.taskId)}
                             className="h-8 w-8 p-0"
                             title={
-                              todo.completed
+                              todo.markedDoneBy
                                 ? 'Mark as incomplete'
                                 : 'Mark as complete'
                             }>
                             <Check
                               className={`w-4 h-4 ${
-                                todo.completed ? 'text-white' : 'text-gray-600'
+                                todo.markedDoneBy
+                                  ? 'text-white'
+                                  : 'text-gray-600'
                               }`}
                             />
                           </Button>
 
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => startEditing(todo.id, todo.text)}
-                            className="h-8 w-8 p-0"
-                            title="Edit todo">
-                            <Edit3 className="w-4 h-4" />
-                          </Button>
+                          {todo.createdBy === keycloak.subject && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() =>
+                                startEditing(todo.taskId, todo.taskTitle)
+                              }
+                              className="h-8 w-8 p-0"
+                              title="Edit todo">
+                              <Edit3 className="w-4 h-4" />
+                            </Button>
+                          )}
 
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => deleteTodo(todo.id)}
-                            className="h-8 w-8 p-0"
-                            title="Delete todo">
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          {todo.createdBy === keycloak.subject && (
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => deleteTodo(todo.taskId)}
+                              className="h-8 w-8 p-0"
+                              title="Delete todo">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          )}
                         </div>
                       </>
                     )}
@@ -233,8 +283,8 @@ const ToDoList: React.FC = () => {
             {todos.length > 0 && (
               <div className="text-center text-sm text-gray-600 border-t pt-4">
                 Total: {todos.length} | Completed:{' '}
-                {todos.filter((t) => t.completed).length} | Remaining:{' '}
-                {todos.filter((t) => !t.completed).length}
+                {todos.filter((t) => t.markedDoneBy).length} | Remaining:{' '}
+                {todos.filter((t) => !t.markedDoneBy).length}
               </div>
             )}
           </CardContent>
@@ -257,7 +307,7 @@ const ToDoList: React.FC = () => {
                   <div className="flex items-center space-x-1">
                     <div
                       className={`w-10 h-10 ${
-                        user.color || 'bg-gray-500'
+                        user.badgeBgColor || 'bg-gray-500'
                       } rounded-full flex items-center justify-center text-white font-semibold text-sm`}>
                       {user.firstName[0]}
                       {user.lastName[0]}

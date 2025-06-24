@@ -10,11 +10,12 @@ export interface Trip {
 }
 
 export interface TripUsers {
-  id: string;
+  userId: string;
   firstName: string;
   lastName: string;
   // To represent different color for differenet users
   color?: string;
+  badgeBgColor?: string;
 }
 
 export interface CreateTripRequest {
