@@ -21,7 +21,7 @@ const UsersList: React.FC<{ users: TripUsers[] }> = ({ users }) => {
       </div>
 
       {/* Stats Bar */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 mb-6 border border-blue-100">
+      <div className="bg-gradient-to-r bg-gray-200 rounded-lg p-4 mb-6 border border-gray-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-700">
@@ -29,7 +29,7 @@ const UsersList: React.FC<{ users: TripUsers[] }> = ({ users }) => {
             </span>
             <Badge
               variant="secondary"
-              className="bg-blue-100 text-blue-800 font-semibold">
+              className="bg-gray-100 text-gray-800 font-semibold">
               {users.length}
             </Badge>
           </div>

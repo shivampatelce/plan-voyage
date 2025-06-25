@@ -43,8 +43,8 @@ const items = [
     icon: Calendar,
   },
   {
-    title: 'Packaging List',
-    url: ROUTE_PATH.PACKAGING_LIST,
+    title: 'Trip List',
+    url: ROUTE_PATH.TRIP_LIST,
     icon: ListCheck,
   },
   {
@@ -86,11 +86,11 @@ export function AppSidebar({
   return (
     <Sidebar
       className={`h-full ${isSidebarCollapsed ? 'w-12' : 'w-50'}`}
-      collapsible='icon'>
+      collapsible="icon">
       <SidebarHeader>
         {isSidebarCollapsed ? (
           <Button
-            className=''
+            className=""
             onClick={onSidebarCollapse}>
             <ChevronRight size={16} />
           </Button>

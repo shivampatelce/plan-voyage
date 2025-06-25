@@ -17,4 +17,11 @@ export const API_PATH = {
   DELETE_TASK: '/to-do-list',
   UPDATE_TASK: '/to-do-list',
   MARK_AS_DONE: '/to-do-list/mark-as-done',
+
+  // Trip List
+  CREATE_LIST: '/trip-list',
+  GET_TRIP_LIST: '/trip-list',
+  ADD_LIST_ITEM: '/trip-list/add-item',
+  REMOVE_LIST: '/trip-list',
+  REMOVE_LIST_ITEM: '/trip-list/delete-item',
 };

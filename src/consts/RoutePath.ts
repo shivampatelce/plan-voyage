@@ -8,7 +8,7 @@ export const ROUTE_PATH = {
   OVERVIEW: `plan-trip/overview`,
   INVITE: 'plan-trip/invite',
   ITINERARY: 'plan-trip/itinerary',
-  PACKAGING_LIST: 'plan-trip/packaging-list',
+  TRIP_LIST: 'plan-trip/trip-list',
   TO_DO_LIST: 'plan-trip/to-do-list',
   BUDGET: 'plan-trip/budget',
   CHAT: 'plan-trip/chat',

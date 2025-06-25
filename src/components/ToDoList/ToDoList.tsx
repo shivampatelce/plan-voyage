@@ -282,7 +282,6 @@ const ToDoList: React.FC = () => {
                           </Button>
                         </>
                       ) : (
-                        // Display mode
                         <>
                           <Badge
                             variant={
