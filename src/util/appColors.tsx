@@ -1,7 +1,15 @@
 export const appBadgeBackgroundColors = [
   'blue',
   'orange',
-  'red',
-  'gray',
+  'lime',
   'pink',
+  'cyan',
+  'purple',
+  'teal',
+  'yellow',
+  'red',
+  'indigo',
+  'emerald',
+  'green',
+  'gray',
 ];

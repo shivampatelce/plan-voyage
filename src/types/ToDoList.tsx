@@ -4,6 +4,11 @@ export interface AddTaskReq {
   createdBy: string;
 }
 
+export interface UpdateTaskReq {
+  taskTitle: string;
+  taskId: string;
+}
+
 export interface ToDoList {
   taskId: string;
   taskTitle: string;
@@ -11,4 +16,9 @@ export interface ToDoList {
   markedDoneBy?: string;
   bgColor?: string;
   textColor?: string;
+}
+
+export interface MarkAsDoneReq {
+  userId: string | null;
+  taskId: string;
 }

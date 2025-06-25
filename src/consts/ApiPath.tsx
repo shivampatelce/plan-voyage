@@ -14,4 +14,7 @@ export const API_PATH = {
   // To-Do List
   ADD_TO_DO_TASK: '/to-do-list/add',
   TO_DO_LIST: '/to-do-list',
+  DELETE_TASK: '/to-do-list',
+  UPDATE_TASK: '/to-do-list',
+  MARK_AS_DONE: '/to-do-list/mark-as-done',
 };

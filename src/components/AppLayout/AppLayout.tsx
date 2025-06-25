@@ -5,18 +5,20 @@ import AppNav from './AppNav';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import ScrollToTop from '@/util/ScrollToTop';
 import { ROUTE_PATH } from '@/consts/RoutePath';
+import { Toaster } from 'sonner';
 
 const AppLayout: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const location = useLocation();
 
   return (
-    <div className='min-h-screen flex flex-col'>
-      <header className='bg-background border-b sticky top-0 z-50'>
+    <div className="min-h-screen flex flex-col">
+      <Toaster position="top-right" />
+      <header className="bg-background border-b sticky top-0 z-50">
         <AppNav />
       </header>
 
-      <div className='flex flex-1'>
+      <div className="flex flex-1">
         <ScrollToTop />
         <SidebarProvider>
           {location.pathname.startsWith(`/${ROUTE_PATH.PLAN_TRIP}`) && (
