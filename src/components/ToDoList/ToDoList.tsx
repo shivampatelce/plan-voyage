@@ -290,12 +290,14 @@ const ToDoList: React.FC = () => {
                             }
                             className={`flex-1 justify-between px-3 py-2 text-sm ${
                               todo.markedDoneBy
-                                ? 'text-gray-500 bg-gray-100'
+                                ? `bg-gray-100`
                                 : `${todo.bgColor} ${todo.textColor}`
                             }`}>
                             <div
                               className={
-                                todo.markedDoneBy ? 'line-through' : ''
+                                todo.markedDoneBy
+                                  ? `line-through ${todo.textColor}`
+                                  : ''
                               }>
                               {todo.taskTitle}
                             </div>
@@ -307,7 +309,8 @@ const ToDoList: React.FC = () => {
                                       <div
                                         key={index}
                                         className="flex align-baseline">
-                                        <div className={`m-1`}>
+                                        <div
+                                          className={`m-1 text-gray-800 text-sm`}>
                                           Marked As Done By:{' '}
                                         </div>
                                         <div
@@ -385,24 +388,7 @@ const ToDoList: React.FC = () => {
                   {todos.filter((t) => !t.markedDoneBy).length}
                 </div>
               )}
-            </CardContent>
-          )}
-        </Card>
-      </div>
 
-      <div className="max-w-2xl mx-auto p-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-4xl font-bold text-center text-gray-800">
-              Users
-            </CardTitle>
-          </CardHeader>
-          {isLoading ? (
-            <CardContent className="space-y-6">
-              <CustomSkeleton />
-            </CardContent>
-          ) : (
-            <CardContent className="space-y-6">
               <div className="flex justify-center">
                 {trip?.tripUsers.map((user, index) => (
                   <div
