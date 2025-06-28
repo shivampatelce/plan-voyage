@@ -53,14 +53,14 @@ const items = [
     icon: CheckCheck,
   },
   {
-    title: 'Budget',
-    url: ROUTE_PATH.BUDGET,
-    icon: DollarSign,
-  },
-  {
     title: 'Chat',
     url: ROUTE_PATH.CHAT,
     icon: MessageSquare,
+  },
+  {
+    title: 'Budget',
+    url: ROUTE_PATH.BUDGET,
+    icon: DollarSign,
   },
   {
     title: 'Documents',

@@ -23,7 +23,8 @@ export async function apiRequest<
   TResponse = { data: unknown }
 >(
   endpoint: string,
-  options: RequestOptions<TRequest> = { method: 'GET' }
+  options: RequestOptions<TRequest> = { method: 'GET' },
+  baseUrl = API_BASE_URL
 ): Promise<unknown> {
   const { method = 'GET', headers = {}, body } = options;
 
@@ -37,7 +38,7 @@ export async function apiRequest<
     body: body ? JSON.stringify(body) : undefined,
   };
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+  const response = await fetch(`${baseUrl}${endpoint}`, config);
 
   if (response.status === 401) {
     keycloak.login();

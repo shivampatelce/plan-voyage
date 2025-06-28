@@ -24,4 +24,6 @@ export const API_PATH = {
   ADD_LIST_ITEM: '/trip-list/add-item',
   REMOVE_LIST: '/trip-list',
   REMOVE_LIST_ITEM: '/trip-list/delete-item',
+
+  GET_MESSAGES: '/messages',
 };

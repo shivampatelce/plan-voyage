@@ -13,6 +13,7 @@ import TripInvitation from './pages/TripInvitation';
 import TripSettings from './components/TripSettings/TripSettings';
 import ToDoList from './components/ToDoList/ToDoList';
 import SharedTripList from './components/SharedTripList/SharedTripList';
+import Chat from './components/Chat/Chat';
 
 const router = createBrowserRouter([
   {
@@ -89,6 +90,10 @@ const router = createBrowserRouter([
           {
             path: `/${ROUTE_PATH.TO_DO_LIST}/:tripId`,
             element: <ToDoList />,
+          },
+          {
+            path: `/${ROUTE_PATH.CHAT}/:tripId`,
+            element: <Chat />,
           },
         ],
       },
