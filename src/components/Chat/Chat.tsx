@@ -1,6 +1,6 @@
 import keycloak from '@/keycloak-config';
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { io, Socket } from 'socket.io-client';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +33,7 @@ interface ChatMessage {
 }
 
 const CHAT_APP_URL = import.meta.env.VITE_CHAT_APP_URL;
+const PAGE_LIMIT = 20;
 
 const Chat: React.FC = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -41,11 +42,20 @@ const Chat: React.FC = () => {
   const [onlineUsers, setOnlineUsers] = useState<TripUsers[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const [hasMoreMessages, setHasMoreMessages] = useState(false);
+  const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const { tripId } = useParams<{ tripId: string }>();
   const navigate = useNavigate();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const isInitialLoad = useRef<boolean>(true);
 
   const currentUserId = keycloak.subject;
+
+  // Auto scroll to bottom for new messages or initial load
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
 
   useEffect(() => {
     const fetchTripDetails = async (tripId: string) => {
@@ -97,17 +107,17 @@ const Chat: React.FC = () => {
     };
   }, []);
 
-  const fetchMessages = async (tripUsers: TripUsers[]) => {
+  const fetchMessages = async (tripUsers: TripUsers[], page = 1) => {
     try {
       const { data } = (await apiRequest<unknown, unknown>(
-        API_PATH.GET_MESSAGES + `/${tripId}`,
+        API_PATH.GET_MESSAGES + `/${tripId}?page=${page}&limit=${PAGE_LIMIT}`,
         {
           method: 'GET',
         },
         CHAT_APP_URL
-      )) as { data: ChatMessage[] };
+      )) as { data: { messages: ChatMessage[]; hasMore: boolean } };
 
-      const messages: ChatMessage[] = data
+      let chatMessages: ChatMessage[] = data.messages
         .map((message) => {
           const user = tripUsers.find((user) => user.userId === message.userId);
           return {
@@ -121,7 +131,20 @@ const Chat: React.FC = () => {
         })
         .reverse();
 
-      setMessages(messages);
+      // For loading more messages
+      if (page !== 1 && messages.length) {
+        chatMessages = [...chatMessages, ...messages];
+      }
+
+      setHasMoreMessages(data.hasMore);
+      setMessages(chatMessages);
+
+      // Scroll only for initial loading
+      if (page === 1) {
+        setTimeout(scrollToBottom, 100);
+      }
+
+      setPage(page);
     } catch (error) {
       console.error('Error while fetching messages: ', error);
     }
@@ -148,16 +171,24 @@ const Chat: React.FC = () => {
         backgroundColor: user?.badgeBgColor,
       };
       setMessages((prev) => [...prev, message]);
+      setTimeout(scrollToBottom, 100);
     });
 
     return () => {
       socket?.off('onlineUsers');
       socket?.off('newMessage');
     };
-  }, [socket, tripUsers]);
+  }, [scrollToBottom, socket, tripUsers]);
+
+  useEffect(() => {
+    if (isInitialLoad.current && messages.length > 0) {
+      setTimeout(scrollToBottom, 100); // Small delay to ensure DOM is updated
+      isInitialLoad.current = false;
+    }
+  }, [messages, scrollToBottom]);
 
   const getDisplayName = (user: TripUsers) => {
-    return `${user.firstName}${user.lastName}`.toLocaleUpperCase();
+    return `${user.firstName} ${user.lastName}`.toLocaleUpperCase();
   };
 
   const getUserInfo = (userId: string) => {
@@ -188,6 +219,7 @@ const Chat: React.FC = () => {
       backgroundColor: user?.badgeBgColor,
     };
     setMessages((prev) => [...prev, messageData]);
+    setTimeout(scrollToBottom, 100);
 
     setNewMessage('');
     setIsLoading(false);
@@ -295,7 +327,7 @@ const Chat: React.FC = () => {
             </div>
 
             <div className="flex-1 max-h-96 overflow-y-scroll">
-              <ScrollArea className="flex-1 p-4 border-b">
+              <ScrollArea className="flex-1 p-4">
                 {isTripUsersLoading ? (
                   <CustomSkeleton />
                 ) : (
@@ -312,66 +344,79 @@ const Chat: React.FC = () => {
                         </div>
                       </div>
                     ) : (
-                      messages.map((message, index) => (
-                        <div
-                          key={index}
-                          className={`flex ${
-                            message.userId === currentUserId
-                              ? 'justify-end'
-                              : 'justify-start'
-                          }`}>
+                      <>
+                        {hasMoreMessages && (
+                          <div className="flex justify-center">
+                            <Button
+                              onClick={() =>
+                                fetchMessages(tripUsers, page + 1)
+                              }>
+                              Load More
+                            </Button>
+                          </div>
+                        )}
+                        {messages.map((message, index) => (
                           <div
-                            className={`flex items-start gap-3 max-w-[70%] ${
+                            key={index}
+                            className={`flex ${
                               message.userId === currentUserId
-                                ? 'flex-row-reverse'
-                                : 'flex-row'
+                                ? 'justify-end'
+                                : 'justify-start'
                             }`}>
-                            {/* Avatar */}
-                            <div className="flex-shrink-0">
-                              <div
-                                className={`w-8 h-8 ${message.userDetails?.backgroundColor} rounded-full flex items-center justify-center text-white font-semibold text-xs`}>
-                                {message.userDetails &&
-                                  message.userDetails.firstName &&
-                                  message.userDetails.firstName[0]}
-                                {message.userDetails &&
-                                  message.userDetails.lastName &&
-                                  message.userDetails.lastName[0]}
-                              </div>
-                            </div>
-
-                            {/* Message Content */}
                             <div
-                              className={`flex flex-col ${
+                              className={`flex items-start gap-3 max-w-[70%] ${
                                 message.userId === currentUserId
-                                  ? 'items-end'
-                                  : 'items-start'
+                                  ? 'flex-row-reverse'
+                                  : 'flex-row'
                               }`}>
-                              <div
-                                className={`px-4 py-2 rounded-lg bg-gray-100 text-gray-900`}>
-                                <p className="text-sm break-words">
-                                  {message.message}
-                                </p>
+                              {/* Avatar */}
+                              <div className="flex-shrink-0">
+                                <div
+                                  className={`w-8 h-8 ${message.userDetails?.backgroundColor} rounded-full flex items-center justify-center text-white font-semibold text-xs`}>
+                                  {message.userDetails &&
+                                    message.userDetails.firstName &&
+                                    message.userDetails.firstName[0]}
+                                  {message.userDetails &&
+                                    message.userDetails.lastName &&
+                                    message.userDetails.lastName[0]}
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2 mt-1">
-                                <span className="text-xs text-gray-500">
-                                  {message.userDetails?.firstName}{' '}
-                                  {message.userDetails?.lastName}
-                                </span>
-                                <span className="text-xs text-gray-400">
-                                  {formatTime(message.timestamp)}
-                                </span>
+
+                              {/* Message Content */}
+                              <div
+                                className={`flex flex-col ${
+                                  message.userId === currentUserId
+                                    ? 'items-end'
+                                    : 'items-start'
+                                }`}>
+                                <div
+                                  className={`px-4 py-2 rounded-lg bg-gray-100 text-gray-900`}>
+                                  <p className="text-sm break-words">
+                                    {message.message}
+                                  </p>
+                                </div>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <span className="text-xs text-gray-500">
+                                    {message.userDetails?.firstName}{' '}
+                                    {message.userDetails?.lastName}
+                                  </span>
+                                  <span className="text-xs text-gray-400">
+                                    {formatTime(message.timestamp)}
+                                  </span>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      ))
+                        ))}
+                      </>
                     )}
+                    <div ref={messagesEndRef} />
                   </div>
                 )}
               </ScrollArea>
             </div>
 
-            <div className="pt-4 px-4">
+            <div className="pt-4 px-4 border-t">
               <div className="flex gap-2">
                 <Input
                   value={newMessage}
