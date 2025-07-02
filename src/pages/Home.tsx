@@ -87,25 +87,25 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <section className='px-6 py-20 relative overflow-hidden'>
-        <div className='max-w-7xl mx-auto'>
-          <div className='grid lg:grid-cols-2 gap-12 items-center'>
-            <div className='space-y-8'>
-              <div className='space-y-8'>
-                <h1 className='text-5xl lg:text-6xl font-bold text-gray-900 leading-tight'>
+      <section className="px-6 py-20 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <div className="space-y-8">
+                <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
                   Plan Your Perfect Adventure
                 </h1>
-                <p className='text-xl text-gray-600 leading-relaxed'>
+                <p className="text-xl text-gray-600 leading-relaxed">
                   Discover amazing destinations, create detailed itineraries,
                   and share unforgettable moments with AI-powered trip planning
                   that adapts to your style.
                 </p>
               </div>
 
-              <div className='flex flex-col sm:flex-row gap-4'>
+              <div className="flex flex-col sm:flex-row gap-4">
                 <Button onClick={navigateToCreateTrip}>
-                  <span>Start Planning</span>
-                  <ArrowRight className='h-5 w-5' />
+                  <span id="start-planning">Start Planning</span>
+                  <ArrowRight className="h-5 w-5" />
                 </Button>
               </div>
             </div>
@@ -113,28 +113,28 @@ const Home: React.FC = () => {
         </div>
 
         {/* Floating elements */}
-        <div className='absolute top-20 right-10 opacity-20'>
-          <Camera className='h-16 w-16 text-blue-600 animate-bounce' />
+        <div className="absolute top-20 right-10 opacity-20">
+          <Camera className="h-16 w-16 text-blue-600 animate-bounce" />
         </div>
-        <div className='absolute bottom-20 left-10 opacity-20'>
-          <Navigation className='h-12 w-12 text-purple-600 animate-pulse' />
+        <div className="absolute bottom-20 left-10 opacity-20">
+          <Navigation className="h-12 w-12 text-purple-600 animate-pulse" />
         </div>
       </section>
 
       {/* Features Section */}
-      <section className='px-6 py-20 bg-white'>
-        <div className='max-w-7xl mx-auto'>
-          <div className='text-center space-y-4 mb-16'>
-            <h2 className='text-4xl font-bold text-gray-900'>
+      <section className="px-6 py-20 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-4xl font-bold text-gray-900">
               Everything You Need for the Perfect Trip
             </h2>
-            <p className='text-xl text-gray-600 max-w-2xl mx-auto'>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               From inspiration to execution, we've got every aspect of your
               journey covered
             </p>
           </div>
 
-          <div className='grid md:grid-cols-3 gap-8'>
+          <div className="grid md:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <Card
                 key={index}
@@ -143,12 +143,12 @@ const Home: React.FC = () => {
                   <div>
                     <div
                       className={`${feature.iconBackground} w-12 h-12 rounded-lg flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform`}>
-                      <feature.icon className='h-6 w-6 text-white' />
+                      <feature.icon className="h-6 w-6 text-white" />
                     </div>
-                    <h3 className='text-xl font-semibold text-gray-900 mb-4'>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
                       {feature.title}
                     </h3>
-                    <p className='text-gray-600 leading-relaxed'>
+                    <p className="text-gray-600 leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
@@ -159,23 +159,23 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      <section className='p-4'>
-        <div className='max-w-4xl mx-auto text-center'>
-          <h2 className='text-4xl font-bold mb-6'>
+      <section className="p-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold mb-6">
             Ready to Start Your Next Adventure?
           </h2>
-          <p className='text-xl mb-8 max-w-2xl mx-auto'>
+          <p className="text-xl mb-8 max-w-2xl mx-auto">
             Join thousands of travelers who've discovered the joy of effortless
             trip planning. Your perfect adventure awaits.
           </p>
-          <div className='flex flex-col sm:flex-row gap-4 justify-center'>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button onClick={navigateToCreateTrip}>
               <span>Create New Trip</span>
-              <ArrowRight className='h-5 w-5' />
+              <ArrowRight className="h-5 w-5" />
             </Button>
             <Button onClick={navigateToYourTrips}>
               Your Trips
-              <Plane className='h-5 w-5' />
+              <Plane className="h-5 w-5" />
             </Button>
           </div>
         </div>

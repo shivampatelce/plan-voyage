@@ -14,6 +14,7 @@ import TripSettings from './components/TripSettings/TripSettings';
 import ToDoList from './components/ToDoList/ToDoList';
 import SharedTripList from './components/SharedTripList/SharedTripList';
 import Chat from './components/Chat/Chat';
+import ManageExpenses from './components/ManageExpenses/ManageExpenses';
 
 const router = createBrowserRouter([
   {
@@ -94,6 +95,10 @@ const router = createBrowserRouter([
           {
             path: `/${ROUTE_PATH.CHAT}/:tripId`,
             element: <Chat />,
+          },
+          {
+            path: `/${ROUTE_PATH.MANAGE_EXPENSES}/:tripId`,
+            element: <ManageExpenses />,
           },
         ],
       },

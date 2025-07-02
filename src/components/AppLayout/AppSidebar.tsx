@@ -58,8 +58,8 @@ const items = [
     icon: MessageSquare,
   },
   {
-    title: 'Budget',
-    url: ROUTE_PATH.BUDGET,
+    title: 'Manage Expenses',
+    url: ROUTE_PATH.MANAGE_EXPENSES,
     icon: DollarSign,
   },
   {

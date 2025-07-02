@@ -10,7 +10,7 @@ export const ROUTE_PATH = {
   ITINERARY: 'plan-trip/itinerary',
   TRIP_LIST: 'plan-trip/trip-list',
   TO_DO_LIST: 'plan-trip/to-do-list',
-  BUDGET: 'plan-trip/budget',
+  MANAGE_EXPENSES: 'plan-trip/manage-expenses',
   CHAT: 'plan-trip/chat',
   DOCUMENTS: 'plan-trip/documents',
   SETTINGS: 'plan-trip/settings',

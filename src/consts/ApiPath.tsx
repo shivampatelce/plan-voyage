@@ -26,4 +26,11 @@ export const API_PATH = {
   REMOVE_LIST_ITEM: '/trip-list/delete-item',
 
   GET_MESSAGES: '/messages',
+
+  // Budget
+  GET_BUDGET: '/budget',
+  SET_BUDGET: '/budget/set-budget',
+  UPDATE_BUDGET: '/budget/update-budget',
+  ADD_EXPENSE: '/budget/add-expense',
+  DELETE_EXPENSE: '/budget/delete-expense',
 };
