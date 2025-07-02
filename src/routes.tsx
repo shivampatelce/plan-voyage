@@ -66,39 +66,65 @@ const router = createBrowserRouter([
         path: `/${ROUTE_PATH.PLAN_TRIP}`,
         element: (
           <>
-            <RouteProtection>
-              <PlanTrip />
-            </RouteProtection>
+            <PlanTrip />
           </>
         ),
         children: [
           {
             path: `/${ROUTE_PATH.OVERVIEW}/:tripId`,
-            element: <PlanOverview />,
+            element: (
+              <RouteProtection>
+                <PlanOverview />
+              </RouteProtection>
+            ),
           },
           {
             path: `/${ROUTE_PATH.INVITE}/:tripId`,
-            element: <Invite />,
+            element: (
+              <RouteProtection>
+                <Invite />
+              </RouteProtection>
+            ),
           },
           {
             path: `/${ROUTE_PATH.SETTINGS}/:tripId`,
-            element: <TripSettings />,
+            element: (
+              <RouteProtection>
+                <TripSettings />
+              </RouteProtection>
+            ),
           },
           {
             path: `/${ROUTE_PATH.TRIP_LIST}/:tripId`,
-            element: <SharedTripList />,
+            element: (
+              <RouteProtection>
+                <SharedTripList />
+              </RouteProtection>
+            ),
           },
           {
             path: `/${ROUTE_PATH.TO_DO_LIST}/:tripId`,
-            element: <ToDoList />,
+            element: (
+              <RouteProtection>
+                <ToDoList />
+              </RouteProtection>
+            ),
           },
           {
             path: `/${ROUTE_PATH.CHAT}/:tripId`,
-            element: <Chat />,
+            element: (
+              <RouteProtection>
+                <Chat />
+              </RouteProtection>
+            ),
           },
           {
             path: `/${ROUTE_PATH.MANAGE_EXPENSES}/:tripId`,
-            element: <ManageExpenses />,
+            element: (
+              <RouteProtection>
+                <ManageExpenses />
+              </RouteProtection>
+            ),
           },
         ],
       },
