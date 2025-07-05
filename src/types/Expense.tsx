@@ -41,3 +41,10 @@ export interface Settlement {
   settlementAmount: number;
   userDetails?: TripUsers;
 }
+
+export interface NewSettlement {
+  tripId: string;
+  payee: string;
+  payer: string;
+  amount: number;
+}

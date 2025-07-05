@@ -64,7 +64,7 @@ const UsersList: React.FC<{ users: TripUsers[] }> = ({ users }) => {
           </div>
         )}
         <div className="p-6">
-          <div className="flex justify-center">
+          <div className="flex justify-center flex-wrap">
             {users.map((user, index) => {
               return (
                 <div

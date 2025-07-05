@@ -33,11 +33,14 @@ import type {
   Expense,
   ExpenseData,
   ExpenseReq,
+  NewSettlement,
   Settlement,
 } from '@/types/Expense';
 import DeleteExpenseConfirmationDialog from './DeleteExpenseConfirmationDialog';
 import { toast } from 'sonner';
 import keycloak from '@/keycloak-config';
+import SettlementDialog from './SettlementDialog';
+import CustomSkeleton from '../ui/custom/CustomSkeleton';
 
 const ManageExpenses: React.FC = () => {
   const [trip, setTrip] = useState<Trip>();
@@ -54,6 +57,9 @@ const ManageExpenses: React.FC = () => {
   const [expandedExpenses, setExpandedExpenses] = useState<
     Record<string | number, boolean>
   >({});
+  const [isSettlementDialogOpen, setIsSettlementDialogOpen] = useState(false);
+  const [settlementPayee, setSettlementPayee] = useState<TripUsers>();
+  const [settlementPayer, setSettlementPayer] = useState<TripUsers>();
   const navigate = useNavigate();
 
   const totalExpenses = expenses.reduce(
@@ -209,7 +215,10 @@ const ManageExpenses: React.FC = () => {
         body: expenseReq,
       });
 
-      if (trip?.tripUsers) fetchBudget(trip?.tripUsers);
+      if (trip?.tripUsers) {
+        fetchBudget(trip?.tripUsers);
+        fetchSettlements(trip.tripUsers, tripId || '');
+      }
       setIsLoading(false);
     } catch (error) {
       console.error('Error while setting budget:', error);
@@ -226,7 +235,10 @@ const ManageExpenses: React.FC = () => {
         }
       );
 
-      if (trip?.tripUsers) fetchBudget(trip?.tripUsers);
+      if (trip?.tripUsers) {
+        fetchBudget(trip?.tripUsers);
+        fetchSettlements(trip.tripUsers, tripId || '');
+      }
       toast.success('A expense has been deleted.');
       setIsLoading(false);
     } catch (error) {
@@ -246,6 +258,53 @@ const ManageExpenses: React.FC = () => {
       [expenseId]: !prev[expenseId],
     }));
   };
+
+  const handleSettlementButtonClick = (settlement: Settlement) => {
+    const currentUser = trip?.tripUsers.find(
+      (user) => user.userId === keycloak.subject
+    );
+    if (settlement.settlementAmount < 0 && currentUser) {
+      setSettlementPayee(settlement.userDetails);
+      setSettlementPayer(currentUser);
+    } else {
+      setSettlementPayee(currentUser);
+      setSettlementPayer(settlement.userDetails);
+    }
+    setIsSettlementDialogOpen(true);
+  };
+
+  const handleSettlement = async (
+    payee: TripUsers,
+    payer: TripUsers,
+    amount: number
+  ) => {
+    try {
+      const settlement: NewSettlement = {
+        tripId: tripId!,
+        payee: payee.userId,
+        payer: payer.userId,
+        amount,
+      };
+      await apiRequest<NewSettlement, void>(API_PATH.NEW_SETTLEMENT, {
+        method: 'POST',
+        body: settlement,
+      });
+
+      if (trip?.tripUsers) {
+        fetchBudget(trip?.tripUsers);
+        fetchSettlements(trip.tripUsers, tripId || '');
+      }
+      setIsSettlementDialogOpen(false);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error while setting budget:', error);
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return <CustomSkeleton />;
+  }
 
   if (budget === 0) {
     return (
@@ -446,9 +505,11 @@ const ManageExpenses: React.FC = () => {
                       ${Math.abs(settlement.settlementAmount).toFixed(2)}
                     </span>
 
-                    <Button size="sm">
+                    <Button
+                      size="sm"
+                      onClick={() => handleSettlementButtonClick(settlement)}>
                       <DollarSign className="w-4 h-4 mr-1" />
-                      Settle
+                      Settle Up
                     </Button>
                   </div>
                 </div>
@@ -628,6 +689,14 @@ const ManageExpenses: React.FC = () => {
         onClose={() => setShowAddExpense(false)}
         onSave={handleAddExpense}
         tripUsers={trip?.tripUsers || []}
+      />
+
+      <SettlementDialog
+        open={isSettlementDialogOpen}
+        close={() => setIsSettlementDialogOpen(false)}
+        payee={settlementPayee!}
+        payer={settlementPayer!}
+        handleSettlement={handleSettlement}
       />
     </div>
   );

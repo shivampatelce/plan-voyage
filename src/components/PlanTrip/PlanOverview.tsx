@@ -76,7 +76,7 @@ const PlanOverview: React.FC = () => {
         <div className="h-20" />
       </div>
 
-      <div className="mt-30 p-4 flex items-center justify-center flex-wrap">
+      <div className="mt-30 p-4 flex items-center justify-center overflow-auto">
         <UsersList users={trip?.tripUsers || []} />
       </div>
     </>
