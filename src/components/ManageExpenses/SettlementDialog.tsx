@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -17,15 +17,29 @@ const SettlementDialog: React.FC<{
   payer?: TripUsers;
   payee?: TripUsers;
   open: boolean;
+  editSettlementAmount: number;
   handleSettlement: (
     payee: TripUsers,
     payer: TripUsers,
     amount: number
   ) => void;
   close: () => void;
-}> = ({ payer, payee, open, close, handleSettlement }) => {
+  isEdit: boolean;
+}> = ({
+  payer,
+  payee,
+  open,
+  close,
+  handleSettlement,
+  editSettlementAmount,
+  isEdit,
+}) => {
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setAmount(editSettlementAmount.toString());
+  }, [editSettlementAmount]);
 
   const handleAmountChange = (value: string) => {
     setAmount(value);
@@ -131,7 +145,7 @@ const SettlementDialog: React.FC<{
             <Button
               onClick={handleSettle}
               className="flex-1">
-              Settle Up
+              {isEdit ? 'Update' : 'Settle Up'}
             </Button>
           </div>
         </div>

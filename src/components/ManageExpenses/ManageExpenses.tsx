@@ -31,6 +31,7 @@ import { useNavigate, useParams } from 'react-router';
 import { ROUTE_PATH } from '@/consts/RoutePath';
 import AddExpense from './AddExpense';
 import type {
+  EditSettlement,
   Expense,
   ExpenseData,
   ExpenseReq,
@@ -69,6 +70,8 @@ const ManageExpenses: React.FC = () => {
   const [isSettlementDialogOpen, setIsSettlementDialogOpen] = useState(false);
   const [settlementPayee, setSettlementPayee] = useState<TripUsers>();
   const [settlementPayer, setSettlementPayer] = useState<TripUsers>();
+  const [editSettlement, setEditSettlement] =
+    useState<SettlementActivity | null>(null);
   const navigate = useNavigate();
 
   const totalExpenses = expenses.reduce(
@@ -332,6 +335,18 @@ const ManageExpenses: React.FC = () => {
     payer: TripUsers,
     amount: number
   ) => {
+    if (editSettlement === null) {
+      addSettlement(payee, payer, amount);
+    } else {
+      handleEditSettlement(payee, payer, amount);
+    }
+  };
+
+  const addSettlement = async (
+    payee: TripUsers,
+    payer: TripUsers,
+    amount: number
+  ) => {
     try {
       const settlement: NewSettlement = {
         tripId: tripId!,
@@ -354,6 +369,38 @@ const ManageExpenses: React.FC = () => {
       console.error('Error while setting budget:', error);
       setIsLoading(false);
     }
+  };
+
+  const handleEditSettlement = async (
+    payee: TripUsers,
+    payer: TripUsers,
+    amount: number
+  ) => {
+    if (editSettlement)
+      try {
+        const settlement: EditSettlement = {
+          settlementId: editSettlement.settlementId,
+          payee: payee.userId,
+          payer: payer.userId,
+          amount,
+        };
+        await apiRequest<EditSettlement, void>(API_PATH.EDIT_SETTLEMENT, {
+          method: 'PUT',
+          body: settlement,
+        });
+
+        if (trip?.tripUsers) {
+          fetchBudget(trip?.tripUsers);
+          fetchSettlements(trip.tripUsers, tripId || '');
+        }
+        setEditSettlement(null);
+        setIsSettlementDialogOpen(false);
+        setIsLoading(false);
+        toast.success('Settlement activity has been updated.');
+      } catch (error) {
+        console.error('Error while updating activity:', error);
+        setIsLoading(false);
+      }
   };
 
   if (isLoading) {
@@ -778,7 +825,13 @@ const ManageExpenses: React.FC = () => {
                     <span>${settlement.amount}</span>
                     <Button
                       variant="ghost"
-                      size="sm">
+                      size="sm"
+                      onClick={() => {
+                        setSettlementPayee(settlement?.payeeDetail);
+                        setSettlementPayer(settlement.payerDetail);
+                        setEditSettlement(settlement);
+                        setIsSettlementDialogOpen(true);
+                      }}>
                       <Pencil className="w-4 h-4" />
                     </Button>
                     <Button
@@ -831,6 +884,8 @@ const ManageExpenses: React.FC = () => {
         close={() => setIsSettlementDialogOpen(false)}
         payee={settlementPayee!}
         payer={settlementPayer!}
+        isEdit={editSettlement !== null}
+        editSettlementAmount={editSettlement?.amount || 0}
         handleSettlement={handleSettlement}
       />
     </div>

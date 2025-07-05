@@ -50,6 +50,13 @@ export interface NewSettlement {
   amount: number;
 }
 
+export interface EditSettlement {
+  settlementId: string;
+  payee: string;
+  payer: string;
+  amount: number;
+}
+
 export interface SettlementActivity {
   settlementId: string;
   amount: number;
