@@ -20,6 +20,7 @@ import {
   CheckCircle,
   ChevronUp,
   ChevronDown,
+  ArrowRight,
 } from 'lucide-react';
 import SetBudgetDialog from './SetBudgetDialog';
 import type { Trip, TripUsers } from '@/types/Trip';
@@ -35,12 +36,14 @@ import type {
   ExpenseReq,
   NewSettlement,
   Settlement,
+  SettlementActivity,
 } from '@/types/Expense';
 import DeleteExpenseConfirmationDialog from './DeleteExpenseConfirmationDialog';
 import { toast } from 'sonner';
 import keycloak from '@/keycloak-config';
 import SettlementDialog from './SettlementDialog';
 import CustomSkeleton from '../ui/custom/CustomSkeleton';
+import DeleteActivityConfirmationDialog from './DeleteActivityConfirmationDialog';
 
 const ManageExpenses: React.FC = () => {
   const [trip, setTrip] = useState<Trip>();
@@ -54,6 +57,12 @@ const ManageExpenses: React.FC = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteExpenseId, setDeleteExpenseId] = useState<string | null>(null);
   const [settlements, setSettlements] = useState<Settlement[]>([]);
+  const [settlementActivities, setSettlementActivities] = useState<
+    SettlementActivity[]
+  >([]);
+  const [showDeleteActivityDialog, setShowDeleteActivityDialog] =
+    useState(false);
+  const [deleteActivityId, setDeleteActivityId] = useState<string | null>(null);
   const [expandedExpenses, setExpandedExpenses] = useState<
     Record<string | number, boolean>
   >({});
@@ -110,7 +119,13 @@ const ManageExpenses: React.FC = () => {
         {
           method: 'GET',
         }
-      )) as { data: { totalBudget: number; expenses: Expense[] } };
+      )) as {
+        data: {
+          totalBudget: number;
+          expenses: Expense[];
+          settlements: SettlementActivity[];
+        };
+      };
 
       if (data) {
         const { totalBudget } = data;
@@ -128,6 +143,19 @@ const ManageExpenses: React.FC = () => {
           }),
         }));
 
+        const settlements = data.settlements.map((settlement) => {
+          const payerDetail = tripUsers.find(
+            (user) => user.userId === settlement.payer
+          );
+
+          const payeeDetail = tripUsers.find(
+            (user) => user.userId === settlement.payee
+          );
+
+          return { ...settlement, payerDetail, payeeDetail };
+        });
+
+        setSettlementActivities(settlements);
         setBudget(totalBudget);
         setExpenses(expenses);
       }
@@ -242,14 +270,40 @@ const ManageExpenses: React.FC = () => {
       toast.success('A expense has been deleted.');
       setIsLoading(false);
     } catch (error) {
-      console.error('Error while setting budget:', error);
+      console.error('Error while deleting expense:', error);
       setIsLoading(false);
     }
     setDeleteExpenseId(null);
   };
 
+  const deleteActivity = async () => {
+    try {
+      await apiRequest<void, void>(
+        `${API_PATH.DELETE_ACTIVITY}/${deleteActivityId}`,
+        {
+          method: 'DELETE',
+        }
+      );
+
+      if (trip?.tripUsers) {
+        fetchBudget(trip?.tripUsers);
+        fetchSettlements(trip.tripUsers, tripId || '');
+      }
+      toast.success('A expense has been deleted.');
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error while deleting settlement activity:', error);
+      setIsLoading(false);
+    }
+    setDeleteActivityId(null);
+  };
+
   const handleShowDeleteDialog = () => {
     setShowDeleteDialog(!showDeleteDialog);
+  };
+
+  const handleShowDeleteActivityDialog = () => {
+    setShowDeleteActivityDialog(!showDeleteActivityDialog);
   };
 
   const toggleExpense = (expenseId: string) => {
@@ -461,7 +515,7 @@ const ManageExpenses: React.FC = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-6">
+          <>
             <div className="space-y-3">
               {settlements.map((settlement) => (
                 <div
@@ -529,7 +583,7 @@ const ManageExpenses: React.FC = () => {
                 </CardContent>
               </Card>
             )}
-          </div>
+          </>
         </CardContent>
       </Card>
 
@@ -669,6 +723,81 @@ const ManageExpenses: React.FC = () => {
         </CardContent>
       </Card>
 
+      {/* Settlement Activity */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-xl">Settlement Activity</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {settlementActivities.length === 0 ? (
+              <div className="flex items-center justify-center flex-col">
+                <h4 className="text-2xl p-8">No settlement activity yet.</h4>
+              </div>
+            ) : (
+              settlementActivities.map((settlement) => (
+                <div
+                  key={settlement.settlementId}
+                  className="border rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between p-4">
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <div className="flex items-center justify-between">
+                      <div
+                        className={`w-10 h-10 ${
+                          settlement.payeeDetail?.color || 'bg-gray-700'
+                        } rounded-full flex items-center justify-center text-white font-semibold text-sm`}>
+                        {settlement.payeeDetail?.firstName[0]}
+                        {settlement.payeeDetail?.lastName[0]}
+                      </div>
+                      <div className="flex-1 min-w-0 ml-3">
+                        <p className="text-sm font-semibold text-gray-900 truncate">
+                          {settlement.payeeDetail?.firstName}{' '}
+                          {settlement.payeeDetail?.lastName}
+                        </p>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-5 h-5" />
+                    <div className="flex items-center justify-between">
+                      <div
+                        className={`w-10 h-10 ${
+                          settlement.payerDetail?.color || 'bg-gray-700'
+                        } rounded-full flex items-center justify-center text-white font-semibold text-sm`}>
+                        {settlement.payerDetail?.firstName[0]}
+                        {settlement.payerDetail?.lastName[0]}
+                      </div>
+                      <div className="flex-1 min-w-0 ml-3">
+                        <p className="text-sm font-semibold text-gray-900 truncate">
+                          {settlement.payerDetail?.firstName}{' '}
+                          {settlement.payerDetail?.lastName}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex font-semibold gap-3 items-center">
+                    <span>${settlement.amount}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm">
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setDeleteActivityId(settlement.settlementId);
+                        setShowDeleteActivityDialog(true);
+                      }}>
+                      <Trash2 className="w-4 h-4 text-red-600" />
+                    </Button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
       <SetBudgetDialog
         editingBudget={editingBudget}
         newBudget={newBudget}
@@ -682,6 +811,12 @@ const ManageExpenses: React.FC = () => {
         showDeleteDialog={showDeleteDialog}
         setShowDeleteDialog={handleShowDeleteDialog}
         deleteExpense={deleteExpense}
+      />
+
+      <DeleteActivityConfirmationDialog
+        showDeleteDialog={showDeleteActivityDialog}
+        setShowDeleteDialog={handleShowDeleteActivityDialog}
+        deleteActivity={deleteActivity}
       />
 
       <AddExpense

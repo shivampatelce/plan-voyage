@@ -40,6 +40,7 @@ export interface Settlement {
   userId: string;
   settlementAmount: number;
   userDetails?: TripUsers;
+  settlements: SettlementActivity[];
 }
 
 export interface NewSettlement {
@@ -47,4 +48,13 @@ export interface NewSettlement {
   payee: string;
   payer: string;
   amount: number;
+}
+
+export interface SettlementActivity {
+  settlementId: string;
+  amount: number;
+  payee: string;
+  payer: string;
+  payeeDetail?: TripUsers;
+  payerDetail?: TripUsers;
 }
