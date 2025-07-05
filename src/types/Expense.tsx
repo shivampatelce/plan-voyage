@@ -35,3 +35,9 @@ export interface Expense {
   title: string;
   splitDetails: SplitDetail[];
 }
+
+export interface Settlement {
+  userId: string;
+  settlementAmount: number;
+  userDetails?: TripUsers;
+}

@@ -11,7 +11,16 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 
-import { Pencil, Plus, DollarSign, AlertTriangle, Trash2 } from 'lucide-react';
+import {
+  Pencil,
+  Plus,
+  DollarSign,
+  AlertTriangle,
+  Trash2,
+  CheckCircle,
+  ChevronUp,
+  ChevronDown,
+} from 'lucide-react';
 import SetBudgetDialog from './SetBudgetDialog';
 import type { Trip, TripUsers } from '@/types/Trip';
 import { apiRequest } from '@/util/apiRequest';
@@ -20,9 +29,15 @@ import { appBadgeBackgroundColors } from '@/util/appColors';
 import { useNavigate, useParams } from 'react-router';
 import { ROUTE_PATH } from '@/consts/RoutePath';
 import AddExpense from './AddExpense';
-import type { Expense, ExpenseData, ExpenseReq } from '@/types/Expense';
+import type {
+  Expense,
+  ExpenseData,
+  ExpenseReq,
+  Settlement,
+} from '@/types/Expense';
 import DeleteExpenseConfirmationDialog from './DeleteExpenseConfirmationDialog';
 import { toast } from 'sonner';
+import keycloak from '@/keycloak-config';
 
 const ManageExpenses: React.FC = () => {
   const [trip, setTrip] = useState<Trip>();
@@ -35,6 +50,10 @@ const ManageExpenses: React.FC = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteExpenseId, setDeleteExpenseId] = useState<string | null>(null);
+  const [settlements, setSettlements] = useState<Settlement[]>([]);
+  const [expandedExpenses, setExpandedExpenses] = useState<
+    Record<string | number, boolean>
+  >({});
   const navigate = useNavigate();
 
   const totalExpenses = expenses.reduce(
@@ -67,6 +86,7 @@ const ManageExpenses: React.FC = () => {
 
         setTrip(trip);
         fetchBudget(trip.tripUsers);
+        fetchSettlements(trip.tripUsers, tripId || '');
         setIsLoading(false);
       } catch (error) {
         console.error('Error while fetching trip overview:', error);
@@ -109,6 +129,37 @@ const ManageExpenses: React.FC = () => {
       setIsLoading(false);
     } catch (error) {
       console.error('Error while fetching budget:', error);
+      setIsLoading(false);
+    }
+  };
+
+  const fetchSettlements = async (tripUsers: TripUsers[], tripId: string) => {
+    try {
+      const { data } = (await apiRequest<
+        { userId: string; tripId: string },
+        unknown
+      >(API_PATH.GET_SETTLEMENTS, {
+        method: 'POST',
+        body: {
+          userId: keycloak.subject!,
+          tripId: tripId!,
+        },
+      })) as { data: Settlement[] };
+
+      const settlementList = data.map((settlement) => {
+        const userDetails = tripUsers.find(
+          (user) => user.userId === settlement.userId
+        );
+        return {
+          ...settlement,
+          userDetails,
+        };
+      });
+
+      setSettlements(settlementList);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error while fetching settlements:', error);
       setIsLoading(false);
     }
   };
@@ -187,6 +238,13 @@ const ManageExpenses: React.FC = () => {
 
   const handleShowDeleteDialog = () => {
     setShowDeleteDialog(!showDeleteDialog);
+  };
+
+  const toggleExpense = (expenseId: string) => {
+    setExpandedExpenses((prev) => ({
+      ...prev,
+      [expenseId]: !prev[expenseId],
+    }));
   };
 
   if (budget === 0) {
@@ -340,11 +398,77 @@ const ManageExpenses: React.FC = () => {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl">Users</CardTitle>
+            <CardTitle className="text-xl">Settlements</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4"></div>
+          <div className="space-y-6">
+            <div className="space-y-3">
+              {settlements.map((settlement) => (
+                <div
+                  key={settlement.userId}
+                  className="flex items-center justify-between border rounded-lg hover:bg-gray-50 transition-colors p-4">
+                  <div className="flex items-center space-x-2">
+                    <div
+                      className={`w-10 h-10 ${
+                        settlement.userDetails?.color || 'bg-gray-700'
+                      } rounded-full flex items-center justify-center text-white font-semibold text-sm`}>
+                      {settlement.userDetails?.firstName[0]}
+                      {settlement.userDetails?.lastName[0]}
+                    </div>
+
+                    <div className="flex flex-col">
+                      <span className="font-medium text-gray-900">
+                        {settlement.userDetails?.firstName}{' '}
+                        {settlement.userDetails?.lastName}
+                      </span>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <Badge
+                          variant={
+                            settlement.settlementAmount < 0
+                              ? 'destructive'
+                              : 'default'
+                          }
+                          className="text-xs">
+                          {settlement.settlementAmount < 0 ? 'Owes' : 'Owed'}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3">
+                    <span
+                      className={`text-lg font-semibold ${
+                        settlement.settlementAmount < 0
+                          ? 'text-red-600'
+                          : 'text-green-600'
+                      }`}>
+                      ${Math.abs(settlement.settlementAmount).toFixed(2)}
+                    </span>
+
+                    <Button size="sm">
+                      <DollarSign className="w-4 h-4 mr-1" />
+                      Settle
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {settlements.length === 0 && (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <div className="text-gray-500">
+                    <CheckCircle className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+                    <p className="text-lg font-medium">All settled up!</p>
+                    <p className="text-sm">
+                      No outstanding balances to settle.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </CardContent>
       </Card>
 
@@ -382,70 +506,100 @@ const ManageExpenses: React.FC = () => {
               expenses.map((expense) => (
                 <div
                   key={expense.expenseId}
-                  className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                  <div className="flex items-center justify-between p-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3">
-                        <div>
-                          <p className="font-medium">{expense.title}</p>
-                          <p className="text-sm text-gray-600">
-                            {expense.category} •{' '}
-                            {new Date(expense.date).toLocaleDateString(
-                              'en-US',
-                              {
-                                month: 'short',
-                                day: 'numeric',
-                                year: 'numeric',
-                              }
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="font-semibold text-red-600">
-                        -${expense.amount}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="sm">
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setDeleteExpenseId(expense.expenseId);
-                          setShowDeleteDialog(true);
-                        }}
-                        variant="ghost"
-                        size="sm">
-                        <Trash2 className="w-4 h-4 text-red-600" />
-                      </Button>
-                    </div>
-                  </div>
-                  {expense.splitDetails.map(
-                    ({ userDetails, amount }, index) => (
-                      <div
-                        key={index}
-                        className="flex justify-between items-center align-baseline p-2 border rounded-lg my-2">
-                        <div className="flex items-center justify-between">
-                          <div
-                            className={`w-10 h-10 ${
-                              userDetails?.color || 'bg-gray-700'
-                            } rounded-full flex items-center justify-center text-white font-semibold text-sm`}>
-                            {userDetails?.firstName[0]}
-                            {userDetails?.lastName[0]}
-                          </div>
-                          <div className="flex-1 min-w-0 ml-2">
-                            <p className="text-sm font-semibold text-gray-900 truncate">
-                              {userDetails?.firstName} {userDetails?.lastName}
+                  className="border rounded-lg hover:bg-gray-50 transition-colors">
+                  <div className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <div>
+                            <p className="font-medium">{expense.title}</p>
+                            <p className="text-sm text-gray-600">
+                              {expense.category} •{' '}
+                              {new Date(expense.date).toLocaleDateString(
+                                'en-US',
+                                {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
+                                }
+                              )}
                             </p>
                           </div>
                         </div>
-                        <span className="font-semibold text-red-600">
-                          -${amount}
-                        </span>
                       </div>
-                    )
+                      <div className="flex items-center gap-3">
+                        <span className="font-semibold text-red-600">
+                          -${Math.abs(expense.amount).toFixed(2)}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm">
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setDeleteExpenseId(expense.expenseId);
+                            setShowDeleteDialog(true);
+                          }}
+                          variant="ghost"
+                          size="sm">
+                          <Trash2 className="w-4 h-4 text-red-600" />
+                        </Button>
+                        <Button
+                          onClick={() => toggleExpense(expense.expenseId)}
+                          variant="ghost"
+                          size="sm">
+                          {expandedExpenses[expense.expenseId] ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {expandedExpenses[expense.expenseId] && (
+                    <div className="px-4 pb-4 border-t bg-gray-50">
+                      <div className="pt-4 space-y-2">
+                        <h4 className="text-sm font-medium text-gray-700 mb-3">
+                          Split Details:
+                        </h4>
+                        {expense.splitDetails.map(
+                          ({ userDetails, amount, userId }, index) => (
+                            <div
+                              key={index}
+                              className="flex justify-between items-center align-baseline p-3 bg-white border rounded-lg">
+                              <div className="flex items-center justify-between">
+                                <div
+                                  className={`w-10 h-10 ${
+                                    userDetails?.color || 'bg-gray-700'
+                                  } rounded-full flex items-center justify-center text-white font-semibold text-sm`}>
+                                  {userDetails?.firstName[0]}
+                                  {userDetails?.lastName[0]}
+                                </div>
+                                <div className="flex-1 min-w-0 ml-3">
+                                  <p className="text-sm font-semibold text-gray-900 truncate">
+                                    {userDetails?.firstName}{' '}
+                                    {userDetails?.lastName}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {expense.paidBy === userId && (
+                                  <Badge className="bg-green-600">
+                                    Paid By {userDetails?.firstName}
+                                  </Badge>
+                                )}
+                                <span className="font-semibold text-red-600">
+                                  -${Math.abs(amount).toFixed(2)}
+                                </span>
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
                   )}
                 </div>
               ))

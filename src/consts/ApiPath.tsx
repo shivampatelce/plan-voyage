@@ -33,4 +33,5 @@ export const API_PATH = {
   UPDATE_BUDGET: '/budget/update-budget',
   ADD_EXPENSE: '/budget/add-expense',
   DELETE_EXPENSE: '/budget/delete-expense',
+  GET_SETTLEMENTS: '/budget/get-settlements',
 };
