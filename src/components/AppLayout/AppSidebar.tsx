@@ -96,7 +96,7 @@ export function AppSidebar({
           </Button>
         ) : (
           <Button onClick={onSidebarCollapse}>
-            <span>Collapse</span>
+            <span>Hide Sidebar</span>
             <ChevronLeft size={16} />
           </Button>
         )}

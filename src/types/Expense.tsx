@@ -11,12 +11,14 @@ export interface ExpenseReq {
 }
 
 export interface SplitDetail {
+  splitDetailId?: string;
   userId: string;
   amount: number;
   userDetails?: TripUsers;
 }
 
 export interface ExpenseData {
+  expenseId?: string;
   title: string;
   amount: number;
   paidBy: string;

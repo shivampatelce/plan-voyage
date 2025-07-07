@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -29,13 +29,15 @@ import {
 import { CalendarIcon, DollarSign, Split } from 'lucide-react';
 import { format } from 'date-fns';
 import type { TripUsers } from '@/types/Trip';
-import type { ExpenseData } from '@/types/Expense';
+import type { Expense, ExpenseData } from '@/types/Expense';
 
 interface AddExpenseProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (expense: ExpenseData) => void;
   tripUsers: TripUsers[];
+  isEdit: boolean;
+  editExpense: Expense | null;
 }
 
 const AddExpense: React.FC<AddExpenseProps> = ({
@@ -43,6 +45,8 @@ const AddExpense: React.FC<AddExpenseProps> = ({
   onClose,
   onSave,
   tripUsers,
+  isEdit,
+  editExpense,
 }) => {
   const [formData, setFormData] = useState<ExpenseData>({
     title: '',
@@ -59,6 +63,41 @@ const AddExpense: React.FC<AddExpenseProps> = ({
     {}
   );
   const [percentages, setPercentages] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    if (isEdit && editExpense) {
+      const amount = editExpense.splitDetails[0].amount;
+      let splitType: 'equal' | 'custom' | 'percentage' = 'equal';
+
+      for (const detail of editExpense.splitDetails) {
+        if (detail.amount !== amount) {
+          splitType = 'custom';
+          break;
+        }
+      }
+
+      const customAmounts: { [key: string]: string } = {};
+      if (splitType === 'custom') {
+        editExpense.splitDetails.forEach((detail) => {
+          customAmounts[detail.userId] = detail.amount.toString();
+        });
+      }
+
+      setCustomAmounts(customAmounts);
+
+      setFormData({
+        title: editExpense.title,
+        amount: editExpense.amount,
+        paidBy: editExpense.paidBy,
+        splitType,
+        splitDetails: [],
+        date: new Date(),
+        category: editExpense.category,
+      });
+
+      setSelectedUsers(editExpense.splitDetails.map((detail) => detail.userId));
+    }
+  }, [isEdit, editExpense]);
 
   const categories = [
     'Food & Dining',
@@ -113,19 +152,49 @@ const AddExpense: React.FC<AddExpenseProps> = ({
   };
 
   const handleSave = () => {
-    const splitDetails: { userId: string; amount: number }[] = [];
+    const splitDetails: {
+      userId: string;
+      amount: number;
+      splitDetailId?: string;
+    }[] = [];
 
     if (formData.splitType === 'equal') {
       const equalAmount = calculateEqualSplit();
       selectedUsers.forEach((userId) => {
-        splitDetails.push({ userId, amount: equalAmount });
+        let splitDetailId: string | undefined = '';
+        if (isEdit && editExpense) {
+          splitDetailId = editExpense.splitDetails.find(
+            (detail) => detail.userId === userId
+          )?.splitDetailId;
+        }
+
+        if (splitDetailId) {
+          splitDetails.push({ splitDetailId, userId, amount: equalAmount });
+        } else {
+          splitDetails.push({ userId, amount: equalAmount });
+        }
       });
     } else if (formData.splitType === 'custom') {
       selectedUsers.forEach((userId) => {
-        splitDetails.push({
-          userId,
-          amount: parseFloat(customAmounts[userId]) || 0,
-        });
+        let splitDetailId: string | undefined = '';
+        if (isEdit && editExpense) {
+          splitDetailId = editExpense.splitDetails.find(
+            (detail) => detail.userId === userId
+          )?.splitDetailId;
+        }
+
+        if (splitDetailId) {
+          splitDetails.push({
+            splitDetailId,
+            userId,
+            amount: parseFloat(customAmounts[userId]) || 0,
+          });
+        } else {
+          splitDetails.push({
+            userId,
+            amount: parseFloat(customAmounts[userId]) || 0,
+          });
+        }
       });
     } else if (formData.splitType === 'percentage') {
       selectedUsers.forEach((userId) => {
@@ -141,6 +210,10 @@ const AddExpense: React.FC<AddExpenseProps> = ({
       ...formData,
       splitDetails,
     };
+
+    if (isEdit) {
+      expenseData.expenseId = editExpense?.expenseId;
+    }
 
     onSave(expenseData);
     handleReset();
@@ -196,7 +269,7 @@ const AddExpense: React.FC<AddExpenseProps> = ({
           {/* Basic Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Expense Title *</Label>
+              <Label htmlFor="title">Expense Title</Label>
               <Input
                 id="title"
                 value={formData.title}
@@ -207,7 +280,7 @@ const AddExpense: React.FC<AddExpenseProps> = ({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount *</Label>
+              <Label htmlFor="amount">Amount</Label>
               <Input
                 id="amount"
                 type="number"
@@ -227,7 +300,7 @@ const AddExpense: React.FC<AddExpenseProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Category *</Label>
+              <Label>Category</Label>
               <Select
                 value={formData.category}
                 onValueChange={(value) =>
@@ -249,7 +322,7 @@ const AddExpense: React.FC<AddExpenseProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label>Date *</Label>
+              <Label>Date</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -276,7 +349,7 @@ const AddExpense: React.FC<AddExpenseProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label>Paid By *</Label>
+            <Label>Paid By</Label>
             <Select
               value={formData.paidBy}
               onValueChange={(value) =>
@@ -307,7 +380,7 @@ const AddExpense: React.FC<AddExpenseProps> = ({
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
-                <Label>Select Members to Split With *</Label>
+                <Label>Select Members to Split With</Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {tripUsers.map((user) => (
                     <div
@@ -338,7 +411,7 @@ const AddExpense: React.FC<AddExpenseProps> = ({
               {selectedUsers.length > 0 && (
                 <>
                   <div className="space-y-3">
-                    <Label>How to Split *</Label>
+                    <Label>How to Split</Label>
                     <RadioGroup
                       value={formData.splitType}
                       onValueChange={(
@@ -530,13 +603,16 @@ const AddExpense: React.FC<AddExpenseProps> = ({
         <DialogFooter>
           <Button
             variant="outline"
-            onClick={onClose}>
+            onClick={() => {
+              onClose();
+              handleReset();
+            }}>
             Cancel
           </Button>
           <Button
             onClick={handleSave}
             disabled={!isFormValid()}>
-            Add Expense
+            {!isEdit ? 'Add Expense' : 'Edit Expense'}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -72,6 +72,7 @@ const ManageExpenses: React.FC = () => {
   const [settlementPayer, setSettlementPayer] = useState<TripUsers>();
   const [editSettlement, setEditSettlement] =
     useState<SettlementActivity | null>(null);
+  const [editExpense, setEditExpense] = useState<Expense | null>(null);
 
   const [settlementsCollapsed, setSettlementsCollapsed] = useState(false);
   const [expensesCollapsed, setExpensesCollapsed] = useState(false);
@@ -247,15 +248,25 @@ const ManageExpenses: React.FC = () => {
   const handleAddExpense = async (expenseData: ExpenseData) => {
     const expenseReq: ExpenseReq = { ...expenseData, tripId: tripId! };
     try {
-      await apiRequest<ExpenseReq, Expense>(API_PATH.ADD_EXPENSE, {
-        method: 'POST',
-        body: expenseReq,
-      });
+      await apiRequest<ExpenseReq, Expense>(
+        !editExpense ? API_PATH.ADD_EXPENSE : API_PATH.EDIT_EXPENSE,
+        {
+          method: !editExpense ? 'POST' : 'PUT',
+          body: expenseReq,
+        }
+      );
+
+      if (editExpense) {
+        toast.success('Expense has been updated.');
+      } else {
+        toast.success('Expense has been added.');
+      }
 
       if (trip?.tripUsers) {
         fetchBudget(trip?.tripUsers);
         fetchSettlements(trip.tripUsers, tripId || '');
       }
+      setEditExpense(null);
       setIsLoading(false);
     } catch (error) {
       console.error('Error while setting budget:', error);
@@ -727,6 +738,10 @@ const ManageExpenses: React.FC = () => {
                             -${Math.abs(expense.amount).toFixed(2)}
                           </span>
                           <Button
+                            onClick={() => {
+                              setEditExpense(expense);
+                              setShowAddExpense(true);
+                            }}
                             variant="ghost"
                             size="sm">
                             <Pencil className="w-4 h-4" />
@@ -923,17 +938,25 @@ const ManageExpenses: React.FC = () => {
 
       <AddExpense
         isOpen={showAddExpense}
-        onClose={() => setShowAddExpense(false)}
+        isEdit={!!editExpense}
+        editExpense={editExpense}
+        onClose={() => {
+          setEditExpense(null);
+          setShowAddExpense(false);
+        }}
         onSave={handleAddExpense}
         tripUsers={trip?.tripUsers || []}
       />
 
       <SettlementDialog
         open={isSettlementDialogOpen}
-        close={() => setIsSettlementDialogOpen(false)}
+        close={() => {
+          setEditSettlement(null);
+          setIsSettlementDialogOpen(false);
+        }}
         payee={settlementPayee!}
         payer={settlementPayer!}
-        isEdit={editSettlement !== null}
+        isEdit={!!editSettlement}
         editSettlementAmount={editSettlement?.amount || 0}
         handleSettlement={handleSettlement}
       />
