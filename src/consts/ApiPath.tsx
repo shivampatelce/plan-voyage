@@ -38,4 +38,9 @@ export const API_PATH = {
   NEW_SETTLEMENT: '/budget/settlement',
   EDIT_SETTLEMENT: '/budget/edit-settlement-activity',
   DELETE_ACTIVITY: '/budget/delete-settlement-activity',
+
+  // Itinerary
+  GET_ITINERARY: '/itinerary',
+  ADD_ITINERARY: '/itinerary/add-itinerary',
+  REMOVE_PLACE: '/itinerary/remove-place',
 };
