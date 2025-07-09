@@ -9,6 +9,15 @@ export interface Place {
   place: string;
   category: string;
   time?: string;
+  coordinates?: Coordinates;
+}
+
+export interface Coordinates {
+  id: string;
+  latitude: string;
+  longitude: string;
+  place?: string;
+  placeNumber?: number;
 }
 
 export interface AddItinerary {

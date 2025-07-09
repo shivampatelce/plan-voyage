@@ -24,9 +24,18 @@ import { useParams } from 'react-router';
 import { API_PATH } from '@/consts/ApiPath';
 import { apiRequest } from '@/util/apiRequest';
 import type { Trip } from '@/types/Trip';
-import type { AddItinerary, Itinerary } from '@/types/Itinerary';
+import type { AddItinerary, Coordinates, Itinerary } from '@/types/Itinerary';
 import CustomSkeleton from '../ui/custom/CustomSkeleton';
 import { toast } from 'sonner';
+import {
+  MapContainer,
+  TileLayer,
+  Polyline,
+  Marker,
+  Popup,
+} from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 const PLACE_CATEGORIES = [
   'Restaurant',
@@ -39,6 +48,45 @@ const PLACE_CATEGORIES = [
   'Other',
 ];
 
+const createNumberedIcon = (number: number) => {
+  return L.divIcon({
+    html: `
+      <div style="
+        width: 36px;
+        height: 36px;
+        background-color: black;
+        border: 3px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+        font-size: 14px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        position: relative;
+      ">
+        ${number}
+      </div>
+      <div style="
+        position: absolute;
+        top: 32px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 8px solid black;
+      "></div>
+    `,
+    className: 'custom-numbered-marker',
+    iconSize: [36, 44],
+    iconAnchor: [18, 44],
+    popupAnchor: [0, -44],
+  });
+};
+
 const Itinerary: React.FC = () => {
   const [itinerary, setItinerary] = useState<Itinerary[]>([]);
   const [trip, setTrip] = useState<Trip>();
@@ -49,6 +97,8 @@ const Itinerary: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { tripId } = useParams<{ tripId: string }>();
   const [expandedDays, setExpandedDays] = useState(new Set([0]));
+  const [coordinates, setCoordinates] = useState<Coordinates[]>([]);
+  const [centerPlace, setCenterPlace] = useState<Coordinates | null>();
 
   const generateDateRange = (
     startDate: Date | string,
@@ -121,6 +171,30 @@ const Itinerary: React.FC = () => {
     });
 
     setItinerary(fullItinerary);
+
+    const coordinates: Coordinates[] = [];
+
+    fullItinerary.forEach((itinerary, itineraryIndex) => {
+      itinerary.itineraryPlaces?.forEach((place, placeIndex) => {
+        if (
+          place.coordinates &&
+          place.coordinates.latitude &&
+          place.coordinates.longitude
+        )
+          coordinates.push({
+            ...place.coordinates,
+            place: place.place,
+            placeNumber: getPlaceNumber(
+              itineraryIndex,
+              placeIndex,
+              fullItinerary
+            ),
+          });
+      });
+    });
+
+    setCoordinates(coordinates);
+    setCenterPlace(coordinates[0]);
   };
 
   const addPlace = async (date: string | Date, itineraryId?: string) => {
@@ -219,7 +293,11 @@ const Itinerary: React.FC = () => {
     }
   };
 
-  const getPlaceNumber = (dayIndex: number, placeIndex: number): number => {
+  const getPlaceNumber = (
+    dayIndex: number,
+    placeIndex: number,
+    itinerary: Itinerary[]
+  ): number => {
     let totalPlaces = 0;
     for (let i = 0; i < dayIndex; i++) {
       totalPlaces += itinerary[i]?.itineraryPlaces?.length || 0;
@@ -301,7 +379,11 @@ const Itinerary: React.FC = () => {
                             className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow mb-3">
                             <div className="flex items-center gap-3">
                               <div className="flex items-center justify-center w-8 h-8 bg-black text-white rounded-full text-sm font-bold">
-                                {getPlaceNumber(dayIndex, placeIndex)}
+                                {getPlaceNumber(
+                                  dayIndex,
+                                  placeIndex,
+                                  itinerary
+                                )}
                               </div>
                               <MapPin className="h-4 w-4 text-gray-500" />
                               <div>
@@ -408,7 +490,7 @@ const Itinerary: React.FC = () => {
           </div>
 
           <div className="lg:col-span-1">
-            <Card className="sticky top-6 h-[600px] shadow-lg">
+            <Card className="sticky top-6 shadow-lg">
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-gray-800 flex items-center gap-2">
                   <MapPin className="h-5 w-5" />
@@ -417,10 +499,43 @@ const Itinerary: React.FC = () => {
               </CardHeader>
               <CardContent className="h-full">
                 <div className="h-full bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
-                  <div className="text-center">
-                    <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500 font-medium">Map</p>
-                  </div>
+                  {coordinates.length ? (
+                    <MapContainer
+                      center={[centerPlace?.latitude, centerPlace?.longitude]}
+                      zoom={5}
+                      style={{ height: '600px', width: '100%' }}>
+                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                      {coordinates.map((pos, idx) => (
+                        <Marker
+                          key={idx}
+                          position={[pos.latitude, pos.longitude]}
+                          icon={createNumberedIcon(pos.placeNumber || 1)}>
+                          <Popup>
+                            <div className="text-center">
+                              <div className="font-semibold text-lg mb-1">
+                                {pos.placeNumber}. {pos.place}
+                              </div>
+                            </div>
+                          </Popup>
+                        </Marker>
+                      ))}
+                      <Polyline
+                        positions={coordinates.map((p) => [
+                          p.latitude,
+                          p.longitude,
+                        ])}
+                        color="black"
+                      />
+                    </MapContainer>
+                  ) : (
+                    <div className="text-center p-20">
+                      <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-500 font-medium">
+                        Add places to your itinerary and view them on the map
+                        here.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
