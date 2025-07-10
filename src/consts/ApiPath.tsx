@@ -45,4 +45,5 @@ export const API_PATH = {
   REMOVE_PLACE: '/itinerary/remove-place',
   SHARED_ITINERARY: '/shared-itinerary',
   SHARED_TRIP_OVERVIEW: '/shared-itinerary/trip-overview',
+  RELATED_TRIPS: '/shared-itinerary/related-trip-list',
 };

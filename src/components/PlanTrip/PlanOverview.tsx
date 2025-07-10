@@ -7,10 +7,15 @@ import { useParams } from 'react-router';
 import CustomSkeleton from '../ui/custom/CustomSkeleton';
 import UsersList from '../UsersList/UsersList';
 import { appBadgeBackgroundColors } from '@/util/appColors';
+import RelatedItinerary from '../RelatedItinerary/RelatedItinerary';
 
 const PlanOverview: React.FC = () => {
   const [trip, setTrip] = useState<Trip>();
   const [isLoading, setIsLoading] = useState(false);
+  const [relatedTrip, setRelatedTrip] = useState<Trip[]>([]);
+  const [isLoadingRelatedTrip, setIsLoadingRelatedTrip] = useState(false);
+  const [destination, setDestination] = useState<string>('');
+
   const { tripId } = useParams<{ tripId: string }>();
 
   useEffect(() => {
@@ -24,17 +29,15 @@ const PlanOverview: React.FC = () => {
           }
         )) as { data: Trip };
 
-        const trip: Trip = {
-          ...data,
-          tripUsers: data.tripUsers.map((user, index) => ({
-            ...user,
-            color: `bg-${
-              appBadgeBackgroundColors[index % appBadgeBackgroundColors.length]
-            }-500`,
-          })),
-        };
+        data.tripUsers = data.tripUsers.map((user, index) => ({
+          ...user,
+          color: `bg-${
+            appBadgeBackgroundColors[index % appBadgeBackgroundColors.length]
+          }-500`,
+        }));
 
-        setTrip(trip);
+        setTrip(data);
+        setDestination(data.destination);
         setIsLoading(false);
       } catch (error) {
         console.error('Error while fetching trip overview:', error);
@@ -43,6 +46,27 @@ const PlanOverview: React.FC = () => {
     };
     fetchTripOverview();
   }, [tripId]);
+
+  useEffect(() => {
+    if (!destination) return;
+    const fetchRelatedTrip = async () => {
+      setIsLoadingRelatedTrip(true);
+      try {
+        const { data } = (await apiRequest<void, { data: Trip[] }>(
+          API_PATH.RELATED_TRIPS + `/${destination}/${tripId}`,
+          {
+            method: 'POST',
+          }
+        )) as { data: Trip[] };
+        setRelatedTrip(data);
+      } catch (error) {
+        console.error('Error while fetching related trips:', error);
+      } finally {
+        setIsLoadingRelatedTrip(false);
+      }
+    };
+    fetchRelatedTrip();
+  }, [destination, tripId]);
 
   if (isLoading) {
     return <CustomSkeleton />;
@@ -76,7 +100,15 @@ const PlanOverview: React.FC = () => {
         <div className="h-20" />
       </div>
 
-      <div className="mt-30 p-4 flex items-center justify-center overflow-auto">
+      <div className="mt-30 px-4">
+        <RelatedItinerary
+          relatedTrip={relatedTrip}
+          isLoadingRelatedTrip={isLoadingRelatedTrip}
+          tripId={tripId}
+        />
+      </div>
+
+      <div className="p-4 flex items-center justify-center overflow-auto">
         <UsersList users={trip?.tripUsers || []} />
       </div>
     </>
