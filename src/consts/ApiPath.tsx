@@ -43,4 +43,6 @@ export const API_PATH = {
   GET_ITINERARY: '/itinerary',
   ADD_ITINERARY: '/itinerary/add-itinerary',
   REMOVE_PLACE: '/itinerary/remove-place',
+  SHARED_ITINERARY: '/shared-itinerary',
+  SHARED_TRIP_OVERVIEW: '/shared-itinerary/trip-overview',
 };

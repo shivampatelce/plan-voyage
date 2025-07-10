@@ -64,6 +64,10 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: `/${ROUTE_PATH.SHARED_ITINERARY}/:tripId`,
+        element: <Itinerary />,
+      },
+      {
         path: `/${ROUTE_PATH.PLAN_TRIP}`,
         element: (
           <>

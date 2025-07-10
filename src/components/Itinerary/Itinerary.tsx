@@ -20,7 +20,7 @@ import {
   ChevronDown,
   ChevronRight,
 } from 'lucide-react';
-import { useParams } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 import { API_PATH } from '@/consts/ApiPath';
 import { apiRequest } from '@/util/apiRequest';
 import type { Trip } from '@/types/Trip';
@@ -36,6 +36,7 @@ import {
 } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { ROUTE_PATH } from '@/consts/RoutePath';
 
 const PLACE_CATEGORIES = [
   'Restaurant',
@@ -99,6 +100,8 @@ const Itinerary: React.FC = () => {
   const [expandedDays, setExpandedDays] = useState(new Set([0]));
   const [coordinates, setCoordinates] = useState<Coordinates[]>([]);
   const [centerPlace, setCenterPlace] = useState<Coordinates | null>();
+  const [isSharedItinerary, setIsSharedItinerary] = useState(false);
+  const location = useLocation();
 
   const generateDateRange = (
     startDate: Date | string,
@@ -118,30 +121,41 @@ const Itinerary: React.FC = () => {
   };
 
   useEffect(() => {
-    const fetchTripOverview = async () => {
-      setIsLoading(true);
-      try {
-        const { data } = (await apiRequest<{ userId: string }, { data: Trip }>(
-          API_PATH.TRIP_OVERVIEW + `/${tripId}`,
-          {
-            method: 'GET',
-          }
-        )) as { data: Trip };
+    const isSharedItinerary = location.pathname.startsWith(
+      `/${ROUTE_PATH.SHARED_ITINERARY}`
+    );
+    setIsSharedItinerary(isSharedItinerary);
+    fetchTripOverview(isSharedItinerary);
+  }, [location.pathname]);
 
-        setTrip(data);
-        fetchItinerary(data);
-      } catch (error) {
-        console.error('Error while fetching trip overview:', error);
-        setIsLoading(false);
-      }
-    };
-    fetchTripOverview();
-  }, [tripId]);
+  const fetchTripOverview = async (isSharedItinerary: boolean) => {
+    setIsLoading(true);
+    try {
+      const url =
+        (isSharedItinerary
+          ? API_PATH.SHARED_TRIP_OVERVIEW
+          : API_PATH.TRIP_OVERVIEW) + `/${tripId}`;
+      const { data } = (await apiRequest<{ userId: string }, { data: Trip }>(
+        url,
+        {
+          method: 'GET',
+        }
+      )) as { data: Trip };
 
-  const fetchItinerary = async (trip: Trip) => {
+      setTrip(data);
+      fetchItinerary(data, isSharedItinerary);
+    } catch (error) {
+      console.error('Error while fetching trip overview:', error);
+      setIsLoading(false);
+    }
+  };
+
+  const fetchItinerary = async (trip: Trip, isSharedItinerary: boolean) => {
     try {
       const { data } = (await apiRequest<unknown, { data: Itinerary }>(
-        API_PATH.GET_ITINERARY + `/${tripId}`,
+        (isSharedItinerary
+          ? API_PATH.SHARED_ITINERARY
+          : API_PATH.GET_ITINERARY) + `/${tripId}`,
         {
           method: 'GET',
         }
@@ -219,7 +233,7 @@ const Itinerary: React.FC = () => {
         }
       )) as { data: Itinerary };
 
-      if (trip) fetchItinerary(trip);
+      if (trip) fetchItinerary(trip, isSharedItinerary);
 
       // Reset form
       setSelectedPlace('');
@@ -286,7 +300,7 @@ const Itinerary: React.FC = () => {
         method: 'DELETE',
       });
 
-      if (trip) fetchItinerary(trip);
+      if (trip) fetchItinerary(trip, isSharedItinerary);
       toast.success('Place has been removed.');
     } catch (error) {
       console.error('Error while deleting place: ', error);
@@ -403,13 +417,15 @@ const Itinerary: React.FC = () => {
                                 className={getCategoryColor(place.category)}>
                                 {place.category}
                               </Badge>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleRemovePlace(place.id)}
-                                className="text-red-500 hover:text-red-700">
-                                <X className="h-3 w-3" />
-                              </Button>
+                              {!isSharedItinerary && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleRemovePlace(place.id)}
+                                  className="text-red-500 hover:text-red-700">
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              )}
                             </div>
                           </div>
                         ))}
@@ -417,72 +433,76 @@ const Itinerary: React.FC = () => {
                     )}
 
                     {/* Add place form */}
-                    <div className="border-t pt-4 mt-4">
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                        <div>
-                          <Label
-                            htmlFor={`place-${dayIndex}`}
-                            className="text-sm font-medium">
-                            Place
-                          </Label>
-                          <Input
-                            id={`place-${dayIndex}`}
-                            type="text"
-                            placeholder="Enter place name"
-                            value={selectedPlace}
-                            onChange={(e) => setSelectedPlace(e.target.value)}
-                            className="w-full"
-                          />
-                        </div>
+                    {!isSharedItinerary && (
+                      <div className="border-t pt-4 mt-4">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                          <div>
+                            <Label
+                              htmlFor={`place-${dayIndex}`}
+                              className="text-sm font-medium">
+                              Place
+                            </Label>
+                            <Input
+                              id={`place-${dayIndex}`}
+                              type="text"
+                              placeholder="Enter place name"
+                              value={selectedPlace}
+                              onChange={(e) => setSelectedPlace(e.target.value)}
+                              className="w-full"
+                            />
+                          </div>
 
-                        <div>
-                          <Label className="text-sm font-medium">
-                            Category
-                          </Label>
-                          <Select
-                            value={selectedCategory}
-                            onValueChange={setSelectedCategory}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {PLACE_CATEGORIES.map((category) => (
-                                <SelectItem
-                                  key={category}
-                                  value={category}>
-                                  {category}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
+                          <div>
+                            <Label className="text-sm font-medium">
+                              Category
+                            </Label>
+                            <Select
+                              value={selectedCategory}
+                              onValueChange={setSelectedCategory}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Category" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {PLACE_CATEGORIES.map((category) => (
+                                  <SelectItem
+                                    key={category}
+                                    value={category}>
+                                    {category}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
 
-                        <div>
-                          <Label
-                            htmlFor={`time-${dayIndex}`}
-                            className="text-sm font-medium">
-                            Time (Optional)
-                          </Label>
-                          <Input
-                            id={`time-${dayIndex}`}
-                            type="time"
-                            value={selectedTime}
-                            onChange={(e) => setSelectedTime(e.target.value)}
-                            className="w-full"
-                          />
-                        </div>
+                          <div>
+                            <Label
+                              htmlFor={`time-${dayIndex}`}
+                              className="text-sm font-medium">
+                              Time (Optional)
+                            </Label>
+                            <Input
+                              id={`time-${dayIndex}`}
+                              type="time"
+                              value={selectedTime}
+                              onChange={(e) => setSelectedTime(e.target.value)}
+                              className="w-full"
+                            />
+                          </div>
 
-                        <div className="flex items-end">
-                          <Button
-                            onClick={() => addPlace(day.date, day.itineraryId)}
-                            disabled={!selectedPlace || !selectedCategory}
-                            className="w-full">
-                            <Plus className="h-4 w-4 mr-2" />
-                            Add
-                          </Button>
+                          <div className="flex items-end">
+                            <Button
+                              onClick={() =>
+                                addPlace(day.date, day.itineraryId)
+                              }
+                              disabled={!selectedPlace || !selectedCategory}
+                              className="w-full">
+                              <Plus className="h-4 w-4 mr-2" />
+                              Add
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </CardContent>
                 )}
               </Card>
