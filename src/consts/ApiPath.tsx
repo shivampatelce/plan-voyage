@@ -46,4 +46,5 @@ export const API_PATH = {
   SHARED_ITINERARY: '/shared-itinerary',
   SHARED_TRIP_OVERVIEW: '/shared-itinerary/trip-overview',
   RELATED_TRIPS: '/shared-itinerary/related-trip-list',
+  UPDATE_PLACE_NOTES: '/itinerary/add-notes',
 };

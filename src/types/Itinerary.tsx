@@ -10,6 +10,7 @@ export interface Place {
   category: string;
   time?: string;
   coordinates?: Coordinates;
+  notes?: string;
 }
 
 export interface Coordinates {
