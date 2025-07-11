@@ -37,6 +37,7 @@ import {
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { ROUTE_PATH } from '@/consts/RoutePath';
+import ShareItineraryLinkDialog from './ShareItineraryLinkDialog';
 
 const PLACE_CATEGORIES = [
   'Restaurant',
@@ -101,6 +102,8 @@ const Itinerary: React.FC = () => {
   const [coordinates, setCoordinates] = useState<Coordinates[]>([]);
   const [centerPlace, setCenterPlace] = useState<Coordinates | null>();
   const [isSharedItinerary, setIsSharedItinerary] = useState(false);
+  const [isShareItineraryLinkDialogOpen, setIsShareItineraryLinkDialogOpen] =
+    useState(false);
   const location = useLocation();
 
   const generateDateRange = (
@@ -331,6 +334,11 @@ const Itinerary: React.FC = () => {
             <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
               <MapPin className="h-10 w-10" />
               Trip To {trip?.destination}
+              <Button
+                className="mt-2"
+                onClick={() => setIsShareItineraryLinkDialogOpen(true)}>
+                Share Itinerary
+              </Button>
             </h1>
             <div className="text-right">
               <p className="text-sm text-gray-500">Trip Duration</p>
@@ -562,6 +570,15 @@ const Itinerary: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <ShareItineraryLinkDialog
+        isOpen={isShareItineraryLinkDialogOpen}
+        itineraryTitle={trip?.destination || ''}
+        tripId={tripId || ''}
+        setIsOpen={() => {
+          setIsShareItineraryLinkDialogOpen(!isShareItineraryLinkDialogOpen);
+        }}
+      />
     </div>
   );
 };
