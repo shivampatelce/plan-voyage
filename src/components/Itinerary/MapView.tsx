@@ -9,7 +9,6 @@ import {
   Polyline,
 } from 'react-leaflet';
 import type { Coordinates } from '@/types/Itinerary';
-import { useEffect, useState } from 'react';
 import L from 'leaflet';
 
 const createNumberedIcon = (number: number) => {

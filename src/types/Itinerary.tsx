@@ -15,8 +15,8 @@ export interface Place {
 
 export interface Coordinates {
   id: string;
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
   place?: string;
   placeNumber?: number;
 }
