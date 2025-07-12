@@ -855,22 +855,6 @@ const ManageExpenses: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <div
                           className={`w-10 h-10 ${
-                            settlement.payeeDetail?.color || 'bg-gray-700'
-                          } rounded-full flex items-center justify-center text-white font-semibold text-sm`}>
-                          {settlement.payeeDetail?.firstName[0]}
-                          {settlement.payeeDetail?.lastName[0]}
-                        </div>
-                        <div className="flex-1 min-w-0 ml-3">
-                          <p className="text-sm font-semibold text-gray-900 truncate">
-                            {settlement.payeeDetail?.firstName}{' '}
-                            {settlement.payeeDetail?.lastName}
-                          </p>
-                        </div>
-                      </div>
-                      <ArrowRight className="w-5 h-5" />
-                      <div className="flex items-center justify-between">
-                        <div
-                          className={`w-10 h-10 ${
                             settlement.payerDetail?.color || 'bg-gray-700'
                           } rounded-full flex items-center justify-center text-white font-semibold text-sm`}>
                           {settlement.payerDetail?.firstName[0]}
@@ -880,6 +864,22 @@ const ManageExpenses: React.FC = () => {
                           <p className="text-sm font-semibold text-gray-900 truncate">
                             {settlement.payerDetail?.firstName}{' '}
                             {settlement.payerDetail?.lastName}
+                          </p>
+                        </div>
+                      </div>
+                      <ArrowRight className="w-5 h-5" />
+                      <div className="flex items-center justify-between">
+                        <div
+                          className={`w-10 h-10 ${
+                            settlement.payeeDetail?.color || 'bg-gray-700'
+                          } rounded-full flex items-center justify-center text-white font-semibold text-sm`}>
+                          {settlement.payeeDetail?.firstName[0]}
+                          {settlement.payeeDetail?.lastName[0]}
+                        </div>
+                        <div className="flex-1 min-w-0 ml-3">
+                          <p className="text-sm font-semibold text-gray-900 truncate">
+                            {settlement.payeeDetail?.firstName}{' '}
+                            {settlement.payeeDetail?.lastName}
                           </p>
                         </div>
                       </div>

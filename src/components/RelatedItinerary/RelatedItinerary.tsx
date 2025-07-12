@@ -1,15 +1,15 @@
 import type React from 'react';
-import { Activity, Calendar, MapPin } from 'lucide-react';
+import { Activity, Calendar, MapPin, Star } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useNavigate } from 'react-router';
 
 import { ROUTE_PATH } from '@/consts/RoutePath';
 import CardSkeleton from '../ui/custom/CardSkeleton';
 import { Card, CardContent } from '../ui/card';
-import type { Trip } from '@/types/Trip';
+import type { RelatedTrip } from '@/types/Trip';
 
 const RelatedItinerary: React.FC<{
-  relatedTrip: Trip[];
+  relatedTrip: RelatedTrip[];
   isLoadingRelatedTrip: boolean;
   tripId?: string;
 }> = ({ relatedTrip, isLoadingRelatedTrip, tripId }) => {
@@ -43,7 +43,7 @@ const RelatedItinerary: React.FC<{
           {relatedTrip.map((trip) => (
             <Card
               key={trip.tripId}
-              className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md">
+              className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer border-1 shadow-md">
               <div className="relative">
                 <div className="h-48 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
                   {trip.destinationImageUrl ? (
@@ -58,10 +58,10 @@ const RelatedItinerary: React.FC<{
                 </div>
               </div>
 
-              <CardContent className="p-6">
+              <CardContent className="px-4">
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="font-semibold text-lg">
-                    Trip Creator {trip.destination}
+                    Trip Creator: {trip.creatorName}
                   </h3>
                 </div>
 
@@ -75,6 +75,24 @@ const RelatedItinerary: React.FC<{
                     <MapPin className="w-4 h-4 mr-2" />
                     {trip.destination}
                   </div>
+
+                  {trip.rating && (
+                    <div className="flex items-center text-sm text-gray-500 align-baseline">
+                      <div className="flex items-center justify-center align-baseline">
+                        {Array.from({ length: 5 }, (_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i < Math.round(trip.rating || 0)
+                                ? 'text-gray-700 fill-current'
+                                : 'text-gray-300'
+                            }`}
+                          />
+                        ))}
+                      </div>{' '}
+                      <div className="ml-2">({trip.rating} / 5)</div>
+                    </div>
+                  )}
 
                   <Button
                     onClick={() =>

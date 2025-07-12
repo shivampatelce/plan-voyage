@@ -7,6 +7,7 @@ export interface Trip {
   status: string;
   creatorId: string;
   tripUsers: TripUsers[];
+  userId: string;
 }
 
 export interface TripUsers {
@@ -23,4 +24,9 @@ export interface CreateTripRequest {
   startDate: Date | null;
   endDate: Date | null;
   userId: string;
+}
+
+export interface RelatedTrip extends Trip {
+  rating?: number;
+  creatorName?: string;
 }

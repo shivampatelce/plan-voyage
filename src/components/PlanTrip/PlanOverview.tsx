@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { apiRequest } from '@/util/apiRequest';
-import type { Trip } from '@/types/Trip';
+import type { RelatedTrip, Trip } from '@/types/Trip';
 import { API_PATH } from '@/consts/ApiPath';
 import { useParams } from 'react-router';
 import CustomSkeleton from '../ui/custom/CustomSkeleton';
@@ -12,7 +12,7 @@ import RelatedItinerary from '../RelatedItinerary/RelatedItinerary';
 const PlanOverview: React.FC = () => {
   const [trip, setTrip] = useState<Trip>();
   const [isLoading, setIsLoading] = useState(false);
-  const [relatedTrip, setRelatedTrip] = useState<Trip[]>([]);
+  const [relatedTrip, setRelatedTrip] = useState<RelatedTrip[]>([]);
   const [isLoadingRelatedTrip, setIsLoadingRelatedTrip] = useState(false);
   const [destination, setDestination] = useState<string>('');
 
@@ -52,12 +52,12 @@ const PlanOverview: React.FC = () => {
     const fetchRelatedTrip = async () => {
       setIsLoadingRelatedTrip(true);
       try {
-        const { data } = (await apiRequest<void, { data: Trip[] }>(
+        const { data } = (await apiRequest<void, { data: RelatedTrip[] }>(
           API_PATH.RELATED_TRIPS + `/${destination}/${tripId}`,
           {
             method: 'POST',
           }
-        )) as { data: Trip[] };
+        )) as { data: RelatedTrip[] };
         setRelatedTrip(data);
       } catch (error) {
         console.error('Error while fetching related trips:', error);

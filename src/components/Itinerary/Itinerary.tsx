@@ -21,12 +21,20 @@ import {
   ChevronRight,
   FileText,
   Edit3,
+  Star,
+  MessageCircle,
 } from 'lucide-react';
 import { useLocation, useParams } from 'react-router';
 import { API_PATH } from '@/consts/ApiPath';
 import { apiRequest } from '@/util/apiRequest';
 import type { Trip } from '@/types/Trip';
-import type { AddItinerary, Coordinates, Itinerary } from '@/types/Itinerary';
+import type {
+  AddItinerary,
+  AddTripRating,
+  Coordinates,
+  Itinerary,
+  TripRating,
+} from '@/types/Itinerary';
 import CustomSkeleton from '../ui/custom/CustomSkeleton';
 import { toast } from 'sonner';
 import 'leaflet/dist/leaflet.css';
@@ -34,6 +42,9 @@ import { ROUTE_PATH } from '@/consts/RoutePath';
 import ShareItineraryLinkDialog from './ShareItineraryLinkDialog';
 import { Textarea } from '../ui/textarea';
 import MapView from './MapView';
+import keycloak from '@/keycloak-config';
+import ItineraryRatingList from './ItineraryRatingList';
+import ItineraryRatingOverview from './ItineraryRatingOverview';
 
 const PLACE_CATEGORIES = [
   'Restaurant',
@@ -63,6 +74,14 @@ const Itinerary: React.FC = () => {
 
   const [editingNotes, setEditingNotes] = useState<string | null>(null);
   const [noteText, setNoteText] = useState<string>('');
+
+  const [rating, setRating] = useState<number>(0);
+  const [comment, setComment] = useState<string>('');
+  const [hoveredRating, setHoveredRating] = useState<number>(0);
+  const [existingRating, setExistingRating] = useState<TripRating | null>(null);
+  const [ratingList, setRatingList] = useState<TripRating[]>([]);
+  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
+
   const location = useLocation();
 
   const generateDateRange = (
@@ -106,6 +125,7 @@ const Itinerary: React.FC = () => {
 
       setTrip(data);
       fetchItinerary(data, isSharedItinerary);
+      fetchTripRating(tripId!);
     } catch (error) {
       console.error('Error while fetching trip overview:', error);
       setIsLoading(false);
@@ -310,6 +330,98 @@ const Itinerary: React.FC = () => {
     setNoteText('');
   };
 
+  const handleRatingClick = (selectedRating: number) => {
+    setRating(selectedRating);
+  };
+
+  const handleRatingSubmit = async () => {
+    if (!rating || !comment.trim()) {
+      toast.error('Please provide both a rating and a comment.');
+      return;
+    }
+
+    setIsSubmittingRating(true);
+    try {
+      const ratingData: AddTripRating = {
+        rating,
+        comment: comment.trim(),
+        tripId: tripId!,
+        userId: keycloak.subject!,
+      };
+
+      if (existingRating) {
+        ratingData.itineraryRatingId = existingRating.itineraryRatingId;
+      }
+
+      await apiRequest<AddTripRating, { data: TripRating }>(
+        API_PATH.ADD_ITINERARY_RATING,
+        {
+          method: 'POST',
+          body: ratingData,
+        }
+      );
+
+      if (existingRating) {
+        toast.success('Rating updated successfully!');
+      } else {
+        toast.success('Rating submitted successfully!');
+      }
+
+      fetchTripRating(tripId!);
+    } catch (error) {
+      console.error('Error while submitting rating:', error);
+      toast.error('Failed to submit rating. Please try again.');
+    } finally {
+      setIsSubmittingRating(false);
+    }
+  };
+
+  const fetchTripRating = async (tripId: string) => {
+    const { data } = (await apiRequest<void, { data: TripRating[] }>(
+      `${API_PATH.ITINERARY_RATING}/${tripId}`,
+      {
+        method: 'GET',
+      }
+    )) as { data: TripRating[] };
+    if (keycloak.subject) {
+      const existingTripRating = data.find(
+        (rating) => rating.commenterId === keycloak.subject
+      );
+      if (existingTripRating) {
+        setExistingRating(existingTripRating);
+        setComment(existingTripRating.comment);
+        setRating(existingTripRating.rating);
+      }
+    }
+    setRatingList(data);
+  };
+
+  const renderStars = () => {
+    return Array.from({ length: 5 }, (_, index) => {
+      const starRating = index + 1;
+      const isActive = starRating <= (hoveredRating || rating);
+
+      return (
+        <button
+          key={index}
+          type="button"
+          onClick={() => handleRatingClick(starRating)}
+          onMouseEnter={() => setHoveredRating(starRating)}
+          onMouseLeave={() => setHoveredRating(0)}
+          className={`p-1 transition-colors duration-200 ${
+            isActive
+              ? 'text-gray-800 hover:text-gray-800'
+              : 'text-gray-300 hover:text-gray-400'
+          }`}
+          disabled={!isSharedItinerary}>
+          <Star
+            className={`h-8 w-8 ${isActive ? 'fill-current' : 'fill-none'}`}
+          />
+        </button>
+      );
+    });
+  };
+
   if (isLoading) {
     return <CustomSkeleton />;
   }
@@ -364,6 +476,10 @@ const Itinerary: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {isSharedItinerary && (
+            <ItineraryRatingOverview ratingList={ratingList} />
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
@@ -606,6 +722,125 @@ const Itinerary: React.FC = () => {
               <MapView coordinates={coordinates} />
             </div>
           </div>
+
+          {/* Rating Section */}
+          {isSharedItinerary && keycloak.subject !== trip?.userId && (
+            <div className="mt-12 mb-8">
+              <Card className="shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-xl font-semibold text-gray-800 flex items-center gap-3">
+                    <Star className="h-6 w-6" />
+                    Rate This Trip
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    {keycloak.authenticated ? (
+                      <>
+                        <div>
+                          <Label className="text-sm font-medium text-gray-700 mb-3 block">
+                            How would you rate this trip?
+                          </Label>
+                          <div className="flex items-center gap-1">
+                            {renderStars()}
+                            {rating > 0 && (
+                              <span className="ml-3 text-sm text-gray-600">
+                                {rating}/5 stars
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label
+                            htmlFor="trip-comment"
+                            className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                            <MessageCircle className="h-4 w-4" />
+                            Share your experience
+                          </Label>
+                          <Textarea
+                            id="trip-comment"
+                            placeholder="Tell us about your trip experience, favorite places, recommendations, or anything you'd like to share..."
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            className="w-full min-h-[120px] resize-none"
+                            disabled={!isSharedItinerary}
+                          />
+                        </div>
+
+                        {isSharedItinerary && (
+                          <div className="flex items-center gap-3 pt-4">
+                            <Button
+                              onClick={handleRatingSubmit}
+                              disabled={
+                                !rating || !comment.trim() || isSubmittingRating
+                              }
+                              className="px-6">
+                              {isSubmittingRating ? (
+                                <>
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                                  {existingRating
+                                    ? 'Updating...'
+                                    : 'Submitting...'}
+                                </>
+                              ) : (
+                                <>
+                                  {existingRating
+                                    ? 'Update Rating'
+                                    : 'Submit Rating'}
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="flex items-center justify-center gap-3 flex-col">
+                        <span>Login to Rate</span>
+                        <Button
+                          onClick={() => {
+                            keycloak.login();
+                          }}>
+                          Login
+                        </Button>
+                      </div>
+                    )}
+
+                    {isSharedItinerary && existingRating && (
+                      <div className="p-4 bg-gray-50 rounded-lg border">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="flex">
+                            {Array.from({ length: 5 }, (_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-4 w-4 ${
+                                  i < existingRating.rating
+                                    ? 'text-gray-800 fill-current'
+                                    : 'text-gray-300'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                          <span className="text-sm font-medium text-gray-700">
+                            {existingRating.rating}/5 stars
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                          {existingRating.comment}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Rating list */}
+          <ItineraryRatingList
+            ratingList={ratingList}
+            isSharedItinerary={isSharedItinerary}
+          />
         </div>
 
         <ShareItineraryLinkDialog

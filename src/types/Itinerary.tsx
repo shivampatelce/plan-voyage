@@ -29,3 +29,20 @@ export interface AddItinerary {
   time?: string;
   tripId: string;
 }
+
+export interface TripRating {
+  itineraryRatingId?: string;
+  tripId?: string;
+  rating: number;
+  comment: string;
+  commenterFullName: string;
+  commenterId: string;
+}
+
+export interface AddTripRating {
+  tripId: string;
+  rating: number;
+  comment: string;
+  userId: string;
+  itineraryRatingId?: string;
+}
