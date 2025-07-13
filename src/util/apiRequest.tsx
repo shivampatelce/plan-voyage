@@ -28,14 +28,20 @@ export async function apiRequest<
 ): Promise<unknown> {
   const { method = 'GET', headers = {}, body } = options;
 
+  const isFormData = body instanceof FormData;
+
   const config: RequestInit = {
     method,
     headers: {
-      'Content-Type': 'application/json',
       Authorization: `bearer ${keycloak.token}`,
       ...headers,
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
     },
-    body: body ? JSON.stringify(body) : undefined,
+    body: isFormData
+      ? (body as BodyInit)
+      : body
+      ? JSON.stringify(body)
+      : undefined,
   };
 
   const response = await fetch(`${baseUrl}${endpoint}`, config);

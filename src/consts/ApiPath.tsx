@@ -49,4 +49,8 @@ export const API_PATH = {
   UPDATE_PLACE_NOTES: '/itinerary/add-notes',
   ITINERARY_RATING: '/itinerary/itinerary-rating-list',
   ADD_ITINERARY_RATING: '/itinerary/add-itinerary-rating',
+
+  // Document
+  UPLOAD_DOCUMENT: '/document/upload',
+  DOCUMENTS_LIST: '/document',
 };

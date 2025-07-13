@@ -16,6 +16,7 @@ import SharedTripList from './components/SharedTripList/SharedTripList';
 import Chat from './components/Chat/Chat';
 import ManageExpenses from './components/ManageExpenses/ManageExpenses';
 import Itinerary from './components/Itinerary/Itinerary';
+import Document from './components/Document/Document';
 
 const router = createBrowserRouter([
   {
@@ -136,6 +137,14 @@ const router = createBrowserRouter([
             element: (
               <RouteProtection>
                 <Itinerary />
+              </RouteProtection>
+            ),
+          },
+          {
+            path: `/${ROUTE_PATH.DOCUMENTS}/:tripId`,
+            element: (
+              <RouteProtection>
+                <Document />
               </RouteProtection>
             ),
           },
