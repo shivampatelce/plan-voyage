@@ -53,4 +53,5 @@ export const API_PATH = {
   // Document
   UPLOAD_DOCUMENT: '/document/upload',
   DOCUMENTS_LIST: '/document',
+  DELETE_DOCUMENT: '/document',
 };

@@ -15,6 +15,7 @@ import { apiRequest } from '@/util/apiRequest';
 import { API_PATH } from '@/consts/ApiPath';
 import { useParams } from 'react-router';
 import keycloak from '@/keycloak-config';
+import DeleteDocumentConfirmationDialog from './DeleteDocumentConfirmationDialog';
 
 interface FileDetails {
   fileName: string;
@@ -22,12 +23,16 @@ interface FileDetails {
   fileSize: number;
   uploadDate: Date;
   uploaderFullName: string;
+  uploaderId: string;
+  documentId: string;
 }
 
 const Document: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [documents, setDocuments] = useState<FileDetails[]>([]);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteDocumentId, setDeleteDocumentId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const { tripId } = useParams<{ tripId: string }>();
@@ -119,13 +124,13 @@ const Document: React.FC = () => {
         );
 
         fetchDocuments();
-        toast.success('File uploaded successfully.');
+        toast.success('Document has been uploaded successfully.');
         setSelectedFile(null);
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
       } catch (error) {
-        toast.error('Error while uploading file, Please try again.');
+        toast.error('Error while uploading document, Please try again.');
         console.error('Error while uploading document: ', error);
       }
     }
@@ -169,6 +174,27 @@ const Document: React.FC = () => {
 
   const handleView = (document: unknown) => {
     console.log('Viewing:', document);
+  };
+
+  const handleDocumentDelete = async () => {
+    try {
+      await apiRequest<void, void>(
+        API_PATH.DELETE_DOCUMENT + `/${deleteDocumentId}`,
+        {
+          method: 'DELETE',
+        }
+      );
+
+      setShowDeleteDialog(false);
+      setDeleteDocumentId(null);
+      fetchDocuments();
+      toast.success('Document has been deleted successfully.');
+    } catch (error) {
+      setShowDeleteDialog(false);
+      setDeleteDocumentId(null);
+      toast.error('Error while deleting document, Please try again.');
+      console.error('Error while deleting document: ', error);
+    }
   };
 
   return (
@@ -360,16 +386,32 @@ const Document: React.FC = () => {
                     <Download className="w-4 h-4" />
                     <span>Download</span>
                   </Button>
-                  <Button className="flex-1 px-3 py-2 bg-red-600">
-                    <Trash2 className="w-4 h-4" />
-                    <span>Remove</span>
-                  </Button>
+                  {doc.uploaderId === keycloak.subject && (
+                    <Button
+                      className="flex-1 px-3 py-2 bg-red-600"
+                      onClick={() => {
+                        setDeleteDocumentId(doc.documentId);
+                        setShowDeleteDialog(true);
+                      }}>
+                      <Trash2 className="w-4 h-4" />
+                      <span>Remove</span>
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      <DeleteDocumentConfirmationDialog
+        showDeleteDialog={showDeleteDialog}
+        setShowDeleteDialog={() => {
+          setShowDeleteDialog(!showDeleteDialog);
+          setDeleteDocumentId(null);
+        }}
+        deleteDocument={handleDocumentDelete}
+      />
     </div>
   );
 };
