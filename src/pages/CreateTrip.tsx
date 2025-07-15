@@ -92,87 +92,89 @@ const CreateTrip: React.FC = () => {
   };
 
   return (
-    <div className='min-h-screen p-4 flex items-center justify-center'>
-      <Card className='w-full max-w-md'>
+    <div className="min-h-screen p-4 flex items-center justify-center">
+      <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className='text-2xl font-bold text-center'>
+          <CardTitle className="text-2xl font-bold text-center">
             Create Trip
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form
             onSubmit={handleSubmit}
-            className='space-y-6'>
-            <div className='space-y-2'>
-              <Label htmlFor='destination'>Where You Are Planning To Go?</Label>
+            className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="destination">Where You Are Planning To Go?</Label>
               <Input
-                id='destination'
-                type='text'
-                placeholder='Enter destination (Ex. India, Paris)'
+                id="destination"
+                type="text"
+                placeholder="Enter destination (Ex. India, Paris)"
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
               />
               {errors.destination && (
-                <p className='text-sm text-red-600'>{errors.destination}</p>
+                <p className="text-sm text-red-600">{errors.destination}</p>
               )}
             </div>
 
-            <div className='space-y-4'>
+            <div className="space-y-4">
               <Label>Travel Dates</Label>
 
-              <div className='space-y-2'>
+              <div className="space-y-2">
                 <Label
-                  htmlFor='start-date'
-                  className='text-sm text-gray-600'>
+                  htmlFor="start-date"
+                  className="text-sm text-gray-600">
                   From
                 </Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
-                      id='start-date'
-                      variant='outline'
-                      className='w-full justify-start text-left font-normal'>
-                      <CalendarIcon className='mr-2 h-4 w-4' />
+                      id="start-date"
+                      variant="outline"
+                      className="w-full justify-start text-left font-normal">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
                       {startDate ? formatDate(startDate) : 'Select start date'}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent
-                    className='w-auto p-0'
-                    align='start'>
+                    className="w-auto p-0"
+                    align="start">
                     <Calendar
-                      mode='single'
+                      mode="single"
                       selected={startDate}
                       onSelect={setStartDate}
-                      disabled={(date) => date < new Date()}
+                      disabled={(date) =>
+                        date < new Date() || (endDate && date > endDate)
+                      }
                     />
                   </PopoverContent>
                 </Popover>
                 {errors.startDate && (
-                  <p className='text-sm text-red-600'>{errors.startDate}</p>
+                  <p className="text-sm text-red-600">{errors.startDate}</p>
                 )}
               </div>
 
-              <div className='space-y-2'>
+              <div className="space-y-2">
                 <Label
-                  htmlFor='end-date'
-                  className='text-sm text-gray-600'>
+                  htmlFor="end-date"
+                  className="text-sm text-gray-600">
                   To
                 </Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
-                      id='end-date'
-                      variant='outline'
-                      className='w-full justify-start text-left font-normal'>
-                      <CalendarIcon className='mr-2 h-4 w-4' />
+                      id="end-date"
+                      variant="outline"
+                      className="w-full justify-start text-left font-normal">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
                       {endDate ? formatDate(endDate) : 'Select end date'}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent
-                    className='w-auto p-0'
-                    align='start'>
+                    className="w-auto p-0"
+                    align="start">
                     <Calendar
-                      mode='single'
+                      mode="single"
                       selected={endDate}
                       onSelect={setEndDate}
                       disabled={(date) =>
@@ -182,24 +184,17 @@ const CreateTrip: React.FC = () => {
                   </PopoverContent>
                 </Popover>
                 {errors.endDate && (
-                  <p className='text-sm text-red-600'>{errors.endDate}</p>
+                  <p className="text-sm text-red-600">{errors.endDate}</p>
                 )}
               </div>
             </div>
 
             <Button
-              type='submit'
-              className='w-full'>
+              type="submit"
+              className="w-full">
               Create Trip
             </Button>
           </form>
-          <Button
-            onClick={() => {
-              navigate(`/${ROUTE_PATH.TRIPS}`);
-            }}
-            className='w-full mt-2'>
-            Your Trips
-          </Button>
         </CardContent>
       </Card>
     </div>
