@@ -463,7 +463,7 @@ const GroupCall: React.FC = () => {
         {trip?.tripUsers.map((user, index) => (
           <div
             key={index}
-            className="my-8 mx-2 group relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 border border-gray-200 hover:shadow-md hover:border-black-300 transition-all duration-200 hover:-translate-y-1">
+            className="my-8 mx-2 group relative rounded-lg p-4 border border-gray-200 hover:shadow-md hover:border-black-300 transition-all duration-200 hover:-translate-y-1">
             <div className="flex items-center space-x-1">
               <div
                 className={`w-10 h-10 ${user.badgeBgColor} rounded-full flex items-center justify-center text-white font-semibold text-sm`}>

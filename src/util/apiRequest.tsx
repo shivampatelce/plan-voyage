@@ -63,3 +63,32 @@ export async function apiRequest<
 
   return (await response.json()) as TResponse;
 }
+
+export async function apiBlobRequest(endpoint: string): Promise<Response> {
+  const config: RequestInit = {
+    method: 'GET',
+    headers: {
+      Authorization: `bearer ${keycloak.token}`,
+      'Content-Type': 'application/json',
+    },
+  };
+
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+
+  if (response.status === 401) {
+    keycloak.login();
+    return Promise.reject({
+      message: 'Unauthorized. Redirecting to login.',
+      statusCode: 401,
+    });
+  }
+
+  if (!response.ok) {
+    const errorData: ErrorResponse = await response.json().catch((error) => {
+      console.error(error);
+    });
+    throw errorData;
+  }
+
+  return response;
+}

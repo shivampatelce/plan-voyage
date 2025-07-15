@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
-import { apiRequest } from '@/util/apiRequest';
+import { apiBlobRequest, apiRequest } from '@/util/apiRequest';
 import { API_PATH } from '@/consts/ApiPath';
 import { useParams } from 'react-router';
 import keycloak from '@/keycloak-config';
@@ -168,8 +168,34 @@ const Document: React.FC = () => {
     });
   };
 
-  const handleDownload = (document: unknown) => {
-    console.log('Downloading:', document);
+  const handleDownload = async (doc: FileDetails) => {
+    try {
+      const response = await apiBlobRequest(
+        `${API_PATH.DOWNLOAD_DOCUMENT}/${doc.documentId}`
+      );
+
+      const blob = await response.blob();
+
+      const fileName =
+        response.headers
+          .get('Content-Disposition')
+          ?.split('filename=')[1]
+          ?.replace(/"/g, '') ||
+        doc.fileName ||
+        'downloaded-file';
+
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = window.document.createElement('a');
+      link.href = blobUrl;
+      link.download = fileName;
+      window.document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      toast.error('Error while downloading document, please try again.');
+      console.error('Download error:', error);
+    }
   };
 
   const handleView = (document: unknown) => {
