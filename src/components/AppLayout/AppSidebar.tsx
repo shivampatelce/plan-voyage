@@ -9,6 +9,7 @@ import {
   ListCheck,
   MessageSquare,
   PersonStanding,
+  Phone,
   Settings,
 } from 'lucide-react';
 
@@ -56,6 +57,11 @@ const items = [
     title: 'Chat',
     url: ROUTE_PATH.CHAT,
     icon: MessageSquare,
+  },
+  {
+    title: 'Group Call',
+    url: ROUTE_PATH.GROUP_CALL,
+    icon: Phone,
   },
   {
     title: 'Manage Expenses',

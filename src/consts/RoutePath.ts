@@ -15,4 +15,5 @@ export const ROUTE_PATH = {
   CHAT: 'plan-trip/chat',
   DOCUMENTS: 'plan-trip/documents',
   SETTINGS: 'plan-trip/settings',
+  GROUP_CALL: 'plan-trip/group-call',
 };

@@ -17,6 +17,7 @@ import Chat from './components/Chat/Chat';
 import ManageExpenses from './components/ManageExpenses/ManageExpenses';
 import Itinerary from './components/Itinerary/Itinerary';
 import Document from './components/Document/Document';
+import GroupCall from './components/GroupCall/GroupCall';
 
 const router = createBrowserRouter([
   {
@@ -145,6 +146,14 @@ const router = createBrowserRouter([
             element: (
               <RouteProtection>
                 <Document />
+              </RouteProtection>
+            ),
+          },
+          {
+            path: `/${ROUTE_PATH.GROUP_CALL}/:tripId`,
+            element: (
+              <RouteProtection>
+                <GroupCall />
               </RouteProtection>
             ),
           },
