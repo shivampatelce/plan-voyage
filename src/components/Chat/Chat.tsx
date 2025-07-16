@@ -153,7 +153,9 @@ const Chat: React.FC = () => {
   useEffect(() => {
     socket?.on('onlineUsers', (onlineUsers: OnlineUser[]) => {
       if (tripUsers.length) {
-        const onlineUsersId = onlineUsers.map((user) => user.userId);
+        const onlineUsersId = onlineUsers
+          .filter((userDetail) => userDetail.tripId === tripId)
+          .map((user) => user.userId);
         const users = tripUsers.filter((user) => {
           return onlineUsersId.includes(user.userId);
         });

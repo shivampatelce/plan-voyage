@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 const TripSettings: React.FC = () => {
   const [trip, setTrip] = useState<Trip>();
   const [isLoading, setIsLoading] = useState(false);
+  const [isTripCompleted, setIsTripCompleted] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const { tripId } = useParams<{ tripId: string }>();
@@ -47,6 +48,9 @@ const TripSettings: React.FC = () => {
       const { startDate, endDate } = data;
       setStartDate(new Date(startDate));
       setEndDate(new Date(endDate));
+
+      setIsTripCompleted(new Date(endDate) < new Date());
+
       setIsLoading(false);
     } catch (error) {
       console.error('Error while fetching trip overview:', error);
@@ -180,7 +184,8 @@ const TripSettings: React.FC = () => {
                       <Button
                         id="start-date"
                         variant="outline"
-                        className="w-full justify-start text-left font-normal">
+                        className="w-full justify-start text-left font-normal"
+                        disabled={isTripCompleted}>
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {startDate
                           ? formatDate(startDate)
@@ -216,7 +221,8 @@ const TripSettings: React.FC = () => {
                       <Button
                         id="end-date"
                         variant="outline"
-                        className="w-full justify-start text-left font-normal">
+                        className="w-full justify-start text-left font-normal"
+                        disabled={isTripCompleted}>
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {endDate ? formatDate(endDate) : 'Select end date'}
                       </Button>
@@ -243,7 +249,8 @@ const TripSettings: React.FC = () => {
               <Button
                 type="submit"
                 className="w-full"
-                onClick={updateDates}>
+                onClick={updateDates}
+                disabled={isTripCompleted}>
                 Update Dates
               </Button>
             </form>

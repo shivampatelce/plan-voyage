@@ -7,6 +7,7 @@ import {
   Files,
   Info,
   ListCheck,
+  LocateIcon,
   MessageSquare,
   PersonStanding,
   Phone,
@@ -72,6 +73,11 @@ const items = [
     title: 'Documents',
     url: ROUTE_PATH.DOCUMENTS,
     icon: Files,
+  },
+  {
+    title: 'Location Sharing',
+    url: ROUTE_PATH.LOCATION_SHARING,
+    icon: LocateIcon,
   },
   {
     title: 'Settings',

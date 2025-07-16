@@ -14,6 +14,7 @@ export const ROUTE_PATH = {
   MANAGE_EXPENSES: 'plan-trip/manage-expenses',
   CHAT: 'plan-trip/chat',
   DOCUMENTS: 'plan-trip/documents',
+  LOCATION_SHARING: 'plan-trip/location-sharing',
   SETTINGS: 'plan-trip/settings',
   GROUP_CALL: 'plan-trip/group-call',
 };

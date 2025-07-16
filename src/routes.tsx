@@ -18,6 +18,7 @@ import ManageExpenses from './components/ManageExpenses/ManageExpenses';
 import Itinerary from './components/Itinerary/Itinerary';
 import Document from './components/Document/Document';
 import GroupCall from './components/GroupCall/GroupCall';
+import LocationSharing from './components/LocationSharing/LocationSharing';
 
 const router = createBrowserRouter([
   {
@@ -154,6 +155,14 @@ const router = createBrowserRouter([
             element: (
               <RouteProtection>
                 <GroupCall />
+              </RouteProtection>
+            ),
+          },
+          {
+            path: `/${ROUTE_PATH.LOCATION_SHARING}/:tripId`,
+            element: (
+              <RouteProtection>
+                <LocationSharing />
               </RouteProtection>
             ),
           },
