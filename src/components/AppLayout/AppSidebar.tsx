@@ -1,5 +1,4 @@
 import {
-  Calendar,
   CheckCheck,
   ChevronLeft,
   ChevronRight,
@@ -8,21 +7,24 @@ import {
   Info,
   ListCheck,
   LocateIcon,
+  MapPlus,
   MessageSquare,
-  PersonStanding,
   Phone,
   Settings,
+  UserPlus,
 } from 'lucide-react';
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Button } from '../ui/button';
 import { ROUTE_PATH } from '@/consts/RoutePath';
@@ -37,12 +39,12 @@ const items = [
   {
     title: 'Invite',
     url: ROUTE_PATH.INVITE,
-    icon: PersonStanding,
+    icon: UserPlus,
   },
   {
     title: 'Itinerary',
     url: ROUTE_PATH.ITINERARY,
-    icon: Calendar,
+    icon: MapPlus,
   },
   {
     title: 'Trip List',
@@ -94,24 +96,26 @@ export function AppSidebar({
   onSidebarCollapse: () => void;
 }) {
   const { tripId } = useParams<{ tripId: string }>();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   return (
     <Sidebar
       className={`h-full ${isSidebarCollapsed ? 'w-12' : 'w-50'}`}
       collapsible="icon">
       <SidebarHeader>
-        {isSidebarCollapsed ? (
-          <Button
-            className=""
-            onClick={onSidebarCollapse}>
-            <ChevronRight size={16} />
-          </Button>
-        ) : (
-          <Button onClick={onSidebarCollapse}>
-            <span>Hide Sidebar</span>
-            <ChevronLeft size={16} />
-          </Button>
-        )}
+        {!isMobile &&
+          (isSidebarCollapsed ? (
+            <Button
+              className=""
+              onClick={onSidebarCollapse}>
+              <ChevronRight size={16} />
+            </Button>
+          ) : (
+            <Button onClick={onSidebarCollapse}>
+              <span>Hide Sidebar</span>
+              <ChevronLeft size={16} />
+            </Button>
+          ))}
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -131,6 +135,16 @@ export function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        {isMobile && (
+          <Button
+            className="w-full"
+            onClick={() => setOpenMobile(false)}>
+            <span>Hide Sidebar</span>
+            <ChevronLeft size={16} />
+          </Button>
+        )}
+      </SidebarFooter>
     </Sidebar>
   );
 }
