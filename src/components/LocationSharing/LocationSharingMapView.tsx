@@ -8,6 +8,7 @@ import {
 } from 'react-leaflet';
 import L from 'leaflet';
 import type LocationInformation from '@/types/LocationSharing';
+import type { TripUsers } from '@/types/Trip';
 
 const createCustomIcon = (name: string) => {
   return L.divIcon({
@@ -51,6 +52,10 @@ const createCustomIcon = (name: string) => {
 const LocationSharingMapView: React.FC<{
   locationsInfo: LocationInformation[];
 }> = ({ locationsInfo }) => {
+  const getUserInitials = (user: TripUsers) => {
+    return `${user.firstName[0]}${user.lastName[0]}`;
+  };
+
   return (
     <MapContainer
       center={[
@@ -60,14 +65,18 @@ const LocationSharingMapView: React.FC<{
       zoom={5}
       style={{ height: '600px', width: '100%' }}>
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-      {locationsInfo.map(({ position }, idx) => (
+      {locationsInfo.map(({ position, userInfo }, idx) => (
         <Marker
           key={idx}
           position={[position.latitude, position.longitude]}
-          icon={createCustomIcon('SP')}>
+          icon={createCustomIcon(userInfo ? getUserInitials(userInfo) : 'AU')}>
           <Popup>
             <div className="text-center">
-              <div className="font-semibold text-lg mb-1">SP</div>
+              <div className="font-semibold text-lg mb-1">
+                {userInfo
+                  ? `${userInfo.firstName} ${userInfo.lastName}`
+                  : 'Anonymous User'}
+              </div>
             </div>
           </Popup>
         </Marker>

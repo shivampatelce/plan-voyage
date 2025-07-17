@@ -6,6 +6,10 @@ import { useParams } from 'react-router';
 import keycloak from '@/keycloak-config';
 import type LocationInformation from '@/types/LocationSharing';
 import LocationSharingMapView from './LocationSharingMapView';
+import { apiRequest } from '@/util/apiRequest';
+import type { Trip, TripUsers } from '@/types/Trip';
+import { API_PATH } from '@/consts/ApiPath';
+import { appBadgeBackgroundColors } from '@/util/appColors';
 
 const CHAT_APP_URL = import.meta.env.VITE_CHAT_APP_URL;
 
@@ -14,30 +18,85 @@ const LocationSharing: React.FC = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [locations, setLocations] = useState<LocationInformation[]>();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [trip, setTrip] = useState<Trip>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const { tripId } = useParams<{ tripId: string }>();
 
   useEffect(() => {
     const socket = io(CHAT_APP_URL);
     setSocket(socket);
-    getInitialTripUsersLocation(socket);
-
-    socket.emit('locationSharing', { tripId, userId: keycloak.subject });
+    if (tripId) fetchTripDetails(tripId, socket);
 
     return () => {
       socket?.emit('stopSharingLocation');
       if (intervalRef.current) clearInterval(intervalRef.current);
       socket.disconnect();
     };
-  }, []);
+  }, [tripId]);
 
-  const getInitialTripUsersLocation = (socket: Socket) => {
+  const fetchTripDetails = async (tripId: string, socket: Socket) => {
+    setIsLoading(true);
+    try {
+      const { data } = (await apiRequest<{ userId: string }, { data: Trip }>(
+        API_PATH.TRIP_OVERVIEW + `/${tripId}`,
+        {
+          method: 'GET',
+        }
+      )) as { data: Trip };
+
+      const trip: Trip = {
+        ...data,
+        tripUsers: data.tripUsers.map((user, index) => {
+          const color =
+            appBadgeBackgroundColors[index % appBadgeBackgroundColors.length];
+          return {
+            ...user,
+            color: color,
+            badgeBgColor: `bg-${color}-500`,
+          };
+        }),
+      };
+
+      setTrip(trip);
+      getInitialTripUsersLocation(socket, trip.tripUsers);
+      socket.emit('locationSharing', { tripId, userId: keycloak.subject });
+    } catch (error) {
+      console.error('Error while fetching trip details:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getInitialTripUsersLocation = (
+    socket: Socket,
+    tripUsers: TripUsers[]
+  ) => {
     socket?.on('initialLocations', (locations) => {
-      setLocations(locations);
+      updateLocation(locations, tripUsers);
     });
     socket?.on('updatedLocations', (locations) => {
-      setLocations(locations);
+      updateLocation(locations, tripUsers);
     });
+  };
+
+  const updateLocation = (
+    locations: LocationInformation[],
+    tripUsers: TripUsers[]
+  ) => {
+    if (locations) {
+      locations = locations.map((location) => {
+        const userInfo = tripUsers.find(
+          (user) => user.userId === location.userId
+        );
+        if (userInfo) {
+          return { ...location, userInfo };
+        }
+
+        return { ...location };
+      });
+    }
+    setLocations(locations);
   };
 
   const handleLocationShare = () => {
@@ -66,6 +125,10 @@ const LocationSharing: React.FC = () => {
         });
       }
     );
+  };
+
+  const isSharingLocation = (userId: string) => {
+    return locations?.some((location) => location.userId === userId);
   };
 
   return (
@@ -113,20 +176,32 @@ const LocationSharing: React.FC = () => {
             <Users size={18} />
             Trip Members Location Status
           </h3>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between py-2 px-3 bg-white rounded border">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <span className="text-green-600 font-medium text-sm">SP</span>
+          {trip?.tripUsers.map((user, index) => (
+            <div
+              key={index}
+              className="space-y-2 mb-2">
+              <div className="flex items-center justify-between py-2 px-3 bg-white rounded border">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-8 h-8 ${user.badgeBgColor} rounded-full flex items-center justify-center`}>
+                    <span
+                      className={`${user.badgeBgColor} font-medium text-sm text-white`}>
+                      {`${user.firstName[0]}${user.lastName[0]}`}
+                    </span>
+                  </div>
+                  <span className="font-medium text-gray-700">
+                    {`${user.firstName} ${user.lastName}`}
+                  </span>
                 </div>
-                <span className="font-medium text-gray-700">Shivam Patel</span>
+                {isSharingLocation(user.userId) && (
+                  <span className="text-green-600 text-sm flex items-center gap-1">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    Sharing location
+                  </span>
+                )}
               </div>
-              <span className="text-green-600 text-sm flex items-center gap-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                Sharing location
-              </span>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
