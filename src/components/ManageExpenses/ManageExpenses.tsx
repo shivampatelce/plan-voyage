@@ -215,9 +215,10 @@ const ManageExpenses: React.FC = () => {
         const setBudgetReq = {
           tripId: tripId!,
           budget: budgetValue,
+          userId: keycloak.subject!,
         };
         const { data } = (await apiRequest<
-          { budget: number; tripId: string },
+          { budget: number; tripId: string; userId: string },
           { data: { totalBudget: number } }
         >(budget === 0 ? API_PATH.SET_BUDGET : API_PATH.UPDATE_BUDGET, {
           method: 'POST',

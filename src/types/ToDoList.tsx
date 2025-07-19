@@ -7,6 +7,8 @@ export interface AddTaskReq {
 export interface UpdateTaskReq {
   taskTitle: string;
   taskId: string;
+  tripId: string;
+  userId: string;
 }
 
 export interface ToDoList {
@@ -21,4 +23,5 @@ export interface ToDoList {
 export interface MarkAsDoneReq {
   userId: string | null;
   taskId: string;
+  tripId: string;
 }

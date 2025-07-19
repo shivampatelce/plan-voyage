@@ -56,4 +56,8 @@ export const API_PATH = {
   DOCUMENTS_LIST: '/document',
   DELETE_DOCUMENT: '/document',
   DOWNLOAD_DOCUMENT: '/document/download',
+
+  // Notifications
+  GET_NOTIFICATIONS: '/notification',
+  MARK_AS_SEEN: '/notification/mark-as-seen',
 };

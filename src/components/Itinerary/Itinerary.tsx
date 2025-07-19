@@ -201,6 +201,7 @@ const Itinerary: React.FC = () => {
       category: selectedCategory,
       time: selectedTime || undefined,
       tripId: tripId!,
+      userId: keycloak.subject!,
     };
 
     addItinerary.itineraryId = itineraryId;

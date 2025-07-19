@@ -28,6 +28,7 @@ export interface AddItinerary {
   category: string;
   time?: string;
   tripId: string;
+  userId: string;
 }
 
 export interface TripRating {

@@ -123,6 +123,7 @@ const ToDoList: React.FC = () => {
         const task: MarkAsDoneReq = {
           userId: keycloak.subject!,
           taskId,
+          tripId: tripId!,
         };
 
         await apiRequest<MarkAsDoneReq, unknown>(API_PATH.MARK_AS_DONE, {
@@ -139,6 +140,7 @@ const ToDoList: React.FC = () => {
         const task: MarkAsDoneReq = {
           userId: null,
           taskId,
+          tripId: tripId!,
         };
 
         await apiRequest<MarkAsDoneReq, unknown>(API_PATH.MARK_AS_DONE, {
@@ -179,6 +181,8 @@ const ToDoList: React.FC = () => {
         const task: UpdateTaskReq = {
           taskTitle: editValue.trim(),
           taskId: id,
+          tripId: tripId!,
+          userId: keycloak.subject!,
         };
 
         await apiRequest<UpdateTaskReq, unknown>(API_PATH.UPDATE_TASK, {
