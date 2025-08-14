@@ -87,10 +87,15 @@ export default function AppNav() {
           method: 'GET',
         }
       )) as { data: NotificationRes[] };
-      const notifications = data.map(({ notification, seen }) => ({
-        ...notification,
-        seen,
-      }));
+      const notifications = data
+        .map(({ notification, seen }) => ({
+          ...notification,
+          seen,
+        }))
+        .sort(
+          (a, b) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
       setNotifications(notifications);
     } catch (error) {
       console.error('Error while fetching notifications: ', error);

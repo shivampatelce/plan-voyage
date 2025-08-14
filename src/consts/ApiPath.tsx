@@ -10,6 +10,7 @@ export const API_PATH = {
   INVITATION_LIST: '/trip/invitations',
   INVITATION: '/trip/invitation',
   JOIN_TRIP: '/trip/join-trip',
+  REJECT_TRIP: '/trip/reject-trip',
   UPDATE_TRIP_DATES: '/trip/update-trip-dates',
 
   // To-Do List

@@ -10,6 +10,7 @@ import { apiRequest } from '@/util/apiRequest';
 import type { Trip, TripUsers } from '@/types/Trip';
 import { API_PATH } from '@/consts/ApiPath';
 import { appBadgeBackgroundColors } from '@/util/appColors';
+import CustomSkeleton from '../ui/custom/CustomSkeleton';
 
 const CHAT_APP_URL = import.meta.env.VITE_CHAT_APP_URL;
 
@@ -130,6 +131,10 @@ const LocationSharing: React.FC = () => {
   const isSharingLocation = (userId: string) => {
     return locations?.some((location) => location.userId === userId);
   };
+
+  if (isLoading) {
+    return <CustomSkeleton />;
+  }
 
   return (
     <div className="max-w-4xl mx-auto">

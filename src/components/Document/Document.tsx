@@ -16,16 +16,8 @@ import { API_PATH } from '@/consts/ApiPath';
 import { useParams } from 'react-router';
 import keycloak from '@/keycloak-config';
 import DeleteDocumentConfirmationDialog from './DeleteDocumentConfirmationDialog';
-
-interface FileDetails {
-  fileName: string;
-  fileType: string;
-  fileSize: number;
-  uploadDate: Date;
-  uploaderFullName: string;
-  uploaderId: string;
-  documentId: string;
-}
+import DocumentViewer from './DocumentViewer';
+import type { FileDetails } from '@/types/Document';
 
 const Document: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -34,6 +26,10 @@ const Document: React.FC = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteDocumentId, setDeleteDocumentId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [viewerDocument, setViewerDocument] = useState<FileDetails | null>(
+    null
+  );
+  const [showViewer, setShowViewer] = useState(false);
 
   const { tripId } = useParams<{ tripId: string }>();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -198,8 +194,9 @@ const Document: React.FC = () => {
     }
   };
 
-  const handleView = (document: unknown) => {
-    console.log('Viewing:', document);
+  const handleView = (document: FileDetails) => {
+    setViewerDocument(document);
+    setShowViewer(true);
   };
 
   const handleDocumentDelete = async () => {
@@ -429,6 +426,16 @@ const Document: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Document Viewer Modal */}
+      <DocumentViewer
+        document={viewerDocument}
+        isOpen={showViewer}
+        onClose={() => {
+          setShowViewer(false);
+          setViewerDocument(null);
+        }}
+      />
 
       <DeleteDocumentConfirmationDialog
         showDeleteDialog={showDeleteDialog}
