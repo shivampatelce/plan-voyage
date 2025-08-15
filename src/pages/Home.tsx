@@ -109,6 +109,23 @@ const Home: React.FC = () => {
                 </Button>
               </div>
             </div>
+
+            {/* Hero Image */}
+            <div className="relative">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                <img
+                  src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80"
+                  alt="Beautiful mountain landscape with a serene lake reflecting the sky"
+                  className="w-full h-[500px] object-cover"
+                />
+                {/* Overlay with subtle gradient */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-900/20 via-transparent to-purple-900/20"></div>
+              </div>
+
+              {/* Decorative elements around the image */}
+              <div className="absolute -top-4 -left-4 w-8 h-8 bg-blue-500/20 rounded-full animate-pulse"></div>
+              <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-purple-500/20 rounded-full animate-bounce"></div>
+            </div>
           </div>
         </div>
 

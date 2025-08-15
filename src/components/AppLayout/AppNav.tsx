@@ -232,9 +232,24 @@ export default function AppNav() {
 
   return (
     <div className="flex items-center justify-between px-4 py-2 relative">
-      <div className="font-medium">
-        <h1 className="text-lg md:text-xl">Plan Voyage</h1>
-      </div>
+      <NavLink
+        to="/"
+        className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <div className="relative">
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-md">
+            <Plane className="h-6 w-6" />
+          </div>
+        </div>
+        <div className="font-bold">
+          <h1 className="text-lg md:text-xl text-gray-900 dark:text-white">
+            Plan Voyage
+          </h1>
+          <div className="text-xs text-gray-500 dark:text-gray-400 -mt-1 hidden sm:block">
+            Adventure Planning
+          </div>
+        </div>
+      </NavLink>
+
       <div className="hidden md:flex items-center gap-4">
         <NavigationMenu viewport={false}>
           <NavigationMenuList>
